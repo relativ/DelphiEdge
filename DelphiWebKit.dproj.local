@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.806,C:\Users\srkgn\Dropbox\projeler\PascalDHTML\Main.pas=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.592,=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.806,C:\Users\srkgn\Dropbox\projeler\PascalDHTML\Main.dfm=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.857,C:\Users\srkgn\Dropbox\projeler\PascalDHTML\PascalDHTML.dproj=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2019.02.15 17:16:23.028,D:\Projeler\PascalDHTML\DelphiWebKit.dproj=D:\Projeler\PascalDHTML\PascalDHTML.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
