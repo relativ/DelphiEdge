@@ -1,0 +1,328 @@
+unit DB;
+
+interface
+
+uses SysUtils ,Classes, Data.DB, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Phys, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Stan.Param,
+  FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.VCLUI.Error,
+  FireDAC.VCLUI.Login, FireDAC.VCLUI.Async, FireDAC.VCLUI.Script,
+  FireDAC.VCLUI.Wait, FireDAC.Phys.ODBCDef, FireDAC.Phys.MSAccDef,
+  FireDAC.Phys.MySQLDef, FireDAC.Phys.ASADef, FireDAC.Phys.ADSDef,
+  FireDAC.Phys.FBDef, FireDAC.Phys.PGDef, FireDAC.Phys.IBDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteDef, FireDAC.Phys.OracleDef,
+  FireDAC.Phys.DB2Def, FireDAC.Phys.InfxDef, FireDAC.Phys.MSSQLDef,
+  FireDAC.Phys.TDataDef, FireDAC.Phys.MongoDBDef, IPPeerClient,
+  FireDAC.Phys.DSDef, FireDAC.Phys.TDBXDef, FireDAC.Phys.TDBX,
+  FireDAC.Phys.TDBXBase, FireDAC.Phys.DS, FireDAC.Phys.MongoDB,
+  FireDAC.Phys.TData, FireDAC.Phys.MSSQL, FireDAC.Phys.Infx, FireDAC.Phys.DB2,
+  FireDAC.Phys.Oracle, FireDAC.Phys.SQLite, FireDAC.Phys.IB, FireDAC.Phys.PG,
+  FireDAC.Phys.IBBase, FireDAC.Phys.FB, FireDAC.Phys.ADS, FireDAC.Phys.ASA,
+  FireDAC.Phys.MySQL, FireDAC.Phys.MSAcc, FireDAC.Phys.ODBCBase,
+  FireDAC.Phys.ODBC, FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageXML,
+  FireDAC.Stan.StorageBin, FireDAC.Moni.FlatFile, FireDAC.Moni.Custom,
+  FireDAC.Moni.Base, FireDAC.Moni.RemoteClient, FireDAC.Comp.UI,
+  FireDAC.Comp.Client, FireDAC.Phys.SQLiteVDataSet, FireDAC.Comp.DataSet;
+
+type
+
+  TDBConnection = class(TObject)
+    private
+      SQLConnection: TFDConnection;
+      function GetProviderName: AnsiString;
+      procedure SetProviderName(val: AnsiString);
+      function GetDatabase: string;
+      function GetPassword: string;
+      function GetServer: string;
+      function GetUserName: string;
+      procedure SetDatabase(const Value: string);
+      procedure SetDriverName(val: string);
+      procedure SetPassword(const Value: string);
+      procedure SetServer(const Value: string);
+      procedure SetUserName(const Value: string);
+      function GetConnected: boolean;
+      procedure SetConnected(const Value: boolean);
+      function GetPort: integer;
+      procedure SetPort(const Value: integer);
+      function GetParams: TStringList;
+    public
+      constructor Create;
+      destructor Free;
+      procedure Open();
+      procedure Close();
+      property ProviderName: AnsiString read GetProviderName write SetProviderName;
+      property UserName: string read GetUserName write SetUserName;
+      property Password: string read GetPassword write SetPassword;
+      property Server: string read GetServer write SetServer;
+      property Port: integer read GetPort write SetPort;
+      property Database: string read GetDatabase write SetDatabase;
+      property Connected: boolean read GetConnected write SetConnected;
+      property Params: TStringList read GetParams;
+  end;
+
+  TDBQuery = class(TObject)
+    private
+      UniQuery: TFDQuery;
+      FConnection: TDBConnection;
+      function GetActive: boolean;
+      function GetSQL: TStrings;
+      procedure SetActive(const Value: boolean);
+      function GetConnection: TDBConnection;
+      procedure SetConnection(const Value: TDBConnection);
+    public
+      constructor Create;
+      destructor Free;
+      procedure Open;
+      procedure Close;
+      procedure Next;
+      procedure First;
+      procedure Last;
+      procedure Previous;
+      procedure Append;
+      procedure Edit;
+      procedure Post;
+      procedure ExecSQL;
+      function Eof: boolean;
+      function FieldByNameAsBoolean(FieldName: string): Boolean;
+      function FieldByNameAsDateTime(FieldName: string): TDateTime;
+      function FieldByNameAsFloat(FieldName: string): Double;
+      function FieldByNameAsInteger(FieldName: string): Longint;
+      function FieldByNameAsString(FieldName: string): String;
+      property Active: boolean read GetActive write SetActive;
+      property SQL: TStrings read GetSQL;
+      property Connection: TDBConnection read GetConnection write SetConnection;
+
+  end;
+
+
+
+implementation
+
+{ TConnectionSQL }
+
+procedure TDBConnection.Close;
+begin
+  SQLConnection.Connected := false;
+end;
+
+constructor TDBConnection.Create;
+begin
+  inherited;
+  SQLConnection := TFDConnection.Create(nil);
+  SQLConnection.LoginPrompt := false;
+end;
+
+destructor TDBConnection.Free;
+begin
+  SQLConnection.Free;
+end;
+
+function TDBConnection.GetConnected: boolean;
+begin
+  Result := SQLConnection.Connected;
+end;
+
+function TDBConnection.GetDatabase: string;
+begin
+  Result := SQLConnection.Params.Database;
+end;
+
+function TDBConnection.GetParams: TStringList;
+begin
+  Result := SQLConnection.Params;
+end;
+
+function TDBConnection.GetPassword: string;
+begin
+  Result := SQLConnection.Params.Password;
+end;
+
+function TDBConnection.GetPort: integer;
+begin
+  Result := 0;
+  TryStrToInt(SQLConnection.Params.Values['Port'], Result);
+end;
+
+function TDBConnection.GetProviderName: AnsiString;
+begin
+  Result := SQLConnection.Params.DriverID;
+end;
+
+function TDBConnection.GetServer: string;
+begin
+  Result := SQLConnection.Params.Values['Server'];
+end;
+
+function TDBConnection.GetUserName: string;
+begin
+  Result := SQLConnection.Params.UserName;
+end;
+
+procedure TDBConnection.Open;
+begin
+  SQLConnection.Connected := true;
+end;
+
+procedure TDBConnection.SetConnected(const Value: boolean);
+begin
+  SQLConnection.Connected := Value;
+end;
+
+
+procedure TDBConnection.SetDatabase(const Value: string);
+begin
+  SQLConnection.Params.Database := Value;
+end;
+
+procedure TDBConnection.SetDriverName(val: string);
+begin
+  SQLConnection.Params.DriverID := val;
+end;
+
+procedure TDBConnection.SetPassword(const Value: string);
+begin
+  SQLConnection.Params.Password := Value;
+end;
+
+procedure TDBConnection.SetPort(const Value: integer);
+begin
+  SQLConnection.Params.Values['Port'] := IntToStr(Value);
+end;
+
+procedure TDBConnection.SetProviderName(val: AnsiString);
+begin
+  SQLConnection.DriverName := val;
+  SQLConnection.Params.DriverID := val;
+end;
+
+procedure TDBConnection.SetServer(const Value: string);
+begin
+  SQLConnection.Params.Values['Server'] := Value;
+end;
+
+procedure TDBConnection.SetUserName(const Value: string);
+begin
+  SQLConnection.Params.UserName := Value;
+end;
+
+{ TSQLQuery }
+
+procedure TSQLQuery.Append;
+begin
+  UniQuery.Append;
+end;
+
+procedure TSQLQuery.Close;
+begin
+  UniQuery.Close;
+end;
+
+constructor TSQLQuery.Create;
+begin
+  UniQuery := TFDQuery.Create(nil);
+end;
+
+procedure TSQLQuery.Edit;
+begin
+  UniQuery.Edit;
+end;
+
+function TSQLQuery.Eof: boolean;
+begin
+  Result := UniQuery.Eof;
+end;
+
+procedure TSQLQuery.ExecSQL;
+begin
+  UniQuery.ExecSQL;
+end;
+
+function TSQLQuery.FieldByNameAsBoolean(FieldName: string): Boolean;
+begin
+  Result := UniQuery.FieldByName(FieldName).AsBoolean;
+end;
+
+function TSQLQuery.FieldByNameAsDateTime(FieldName: string): TDateTime;
+begin
+  Result := UniQuery.FieldByName(FieldName).AsDateTime;
+end;
+
+function TSQLQuery.FieldByNameAsFloat(FieldName: string): Double;
+begin
+  Result := UniQuery.FieldByName(FieldName).AsFloat;
+end;
+
+function TSQLQuery.FieldByNameAsInteger(FieldName: string): Longint;
+begin
+  Result := UniQuery.FieldByName(FieldName).AsInteger;
+end;
+
+function TSQLQuery.FieldByNameAsString(FieldName: string): String;
+begin
+  Result := UniQuery.FieldByName(FieldName).AsString;
+end;
+
+procedure TSQLQuery.First;
+begin
+  UniQuery.First;
+end;
+
+destructor TSQLQuery.Free;
+begin
+  UniQuery.Free;
+end;
+
+function TSQLQuery.GetActive: boolean;
+begin
+  Result := UniQuery.Active;
+end;
+
+function TSQLQuery.GetConnection: TDBConnection;
+begin
+  Result := FConnection;
+end;
+
+function TSQLQuery.GetSQL: TStrings;
+begin
+  Result := UniQuery.SQL;
+end;
+
+procedure TSQLQuery.Last;
+begin
+  UniQuery.Last;
+end;
+
+procedure TSQLQuery.Next;
+begin
+  UniQuery.Next;
+end;
+
+procedure TSQLQuery.Open;
+begin
+  UniQuery.Open;
+end;
+
+procedure TSQLQuery.Post;
+begin
+  UniQuery.Post;
+end;
+
+procedure TSQLQuery.Previous;
+begin
+  UniQuery.Prior;
+end;
+
+procedure TSQLQuery.SetActive(const Value: boolean);
+begin
+  UniQuery.Active := Value;
+end;
+
+procedure TSQLQuery.SetConnection(const Value: TDBConnection);
+begin
+  FConnection := Value;
+  UniQuery.Connection := Value.SQLConnection;
+end;
+
+
+
+end.

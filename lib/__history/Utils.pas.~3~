@@ -1,0 +1,52 @@
+unit Utils;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes;
+
+function Intf2Obj(x: IInterface): TObject;
+
+implementation
+
+function Intf2Obj(x: IInterface): TObject;
+type
+  TStub = array[0..3] of Byte;
+const
+  // ADD [ESP+$04], imm8; [ESP+$04] in stdcall is Self argument, after return address
+  add_esp_04_imm8: TStub = ($83, $44, $24, $04);
+  // ADD [ESP+$04], imm32
+  add_esp_04_imm32: TStub = ($81, $44, $24, $04);
+
+  function Match(L, R: PByte): Boolean;
+  var
+    i: Integer;
+  begin
+    for i := 0 to SizeOf(TStub) - 1 do
+      if L[i] <> R[i] then
+        Exit(False);
+    Result := True;
+  end;
+
+var
+  p: PByte;
+begin
+  p := PPointer(x)^; // get to vtable
+  p := PPointer(p)^; // load stub address from vtable
+
+  if Match(p, @add_esp_04_imm8) then
+  begin
+    Inc(p, SizeOf(TStub));
+    Result := TObject(PByte(Pointer(x)) + PShortint(p)^);
+  end
+  else if Match(p, @add_esp_04_imm32) then
+  begin
+    Inc(p, SizeOf(TStub));
+    Result := TObject(PByte(Pointer(x)) + PLongint(p)^);
+  end
+  else
+    raise Exception.Create('Not a Delphi interface implementation?');
+end;
+
+end.

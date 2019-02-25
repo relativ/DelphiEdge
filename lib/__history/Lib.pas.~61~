@@ -1,0 +1,41 @@
+unit Lib;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Dialogs, JavascriptObject;
+
+
+type
+  TLib = class
+    class procedure ShowMessage(Value: string);
+    class function JSDecode(Value: Variant): TJSObject;
+    class function PointerToVariant(Addr: Cardinal): variant;
+  end;
+
+implementation
+
+class function TLib.PointerToVariant(Addr: Cardinal): variant;
+var
+  PAddr: Pointer;
+begin
+  PAddr := Pointer(Addr);
+  Result := PVariant(PAddr)^;
+end;
+
+class procedure TLib.ShowMessage(Value: string);
+begin
+  Vcl.Dialogs.ShowMessage(Value);
+end;
+
+class function TLib.JSDecode(Value: Variant): TJSObject;
+var
+  JS: TJSObject;
+begin
+  JS:= TJSObject.Create();
+  JS.ActualJSPoint := Value;
+  Result := JS;
+end;
+
+end.

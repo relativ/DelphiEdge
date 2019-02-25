@@ -1,0 +1,62 @@
+unit Utils;
+
+interface
+
+function GetImplementingObject(const I: IInterface): TObject;
+
+implementation
+
+function GetImplementingObject(const I: IInterface): TObject;
+const
+ AddByte = $04244483;
+ AddLong = $04244481;
+type
+ PAdjustSelfThunk = ^TAdjustSelfThunk;
+ TAdjustSelfThunk = packed record
+   case AddInstruction: longint of
+     AddByte : (AdjustmentByte: shortint);
+     AddLong : (AdjustmentLong: longint);
+
+   end;
+
+ PInterfaceMT = ^TInterfaceMT;
+ TInterfaceMT = packed record
+   QueryInterfaceThunk: PAdjustSelfThunk;
+ end;
+
+ TInterfaceRef = ^PInterfaceMT;
+
+var
+
+ QueryInterfaceThunk: PAdjustSelfThunk;
+
+begin
+
+ Result := Pointer(I);
+
+ if Assigned(Result) then
+
+   try
+
+     QueryInterfaceThunk := TInterfaceRef(I)^.QueryInterfaceThunk;
+
+     case QueryInterfaceThunk.AddInstruction of
+
+       AddByte: Inc(PAnsiChar(Result), QueryInterfaceThunk.AdjustmentByte);
+
+       AddLong: Inc(PAnsiChar(Result), QueryInterfaceThunk.AdjustmentLong);
+      else
+
+       Result := nil;
+
+     end;
+
+   except
+
+     Result := nil;
+
+   end;
+
+end;
+
+end.

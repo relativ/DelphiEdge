@@ -1,0 +1,298 @@
+unit document;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Winapi.ActiveX, System.Win.ComObj, MSHTML;
+type
+  THTMLElement = class;
+  THTMLElementCollection = class;
+
+  TDocument = class(TObject)
+  private
+    FDocument: IDispatch;
+
+    function GetActiveElement: THTMLElement;
+    function GetAnchors: THTMLElementCollection;
+    function GetBody: THTMLElement;
+    function GetCookie: string;
+    procedure SetCookie(val: string);
+    function GetCharset: string;
+    procedure SetCharset(val: string);
+    function GetDomain: string;
+    function GetForms: THTMLElementCollection;
+    function GetHead: THTMLElement;
+    function GetImages: THTMLElementCollection;
+    function GetScripts: THTMLElementCollection;
+  public
+    property Document: IDispatch read FDocument write FDocument;
+    property ActiveElement: THTMLElement read GetActiveElement;
+    property Anchors: THTMLElementCollection read GetAnchors;
+    property Body: THTMLElement read GetBody;
+    property Head: THTMLElement read GetHead;
+    property Cookie: string read GetCookie write SetCookie;
+    property Charset: string read GetCharset write SetCharset;
+    property Domain: string read GetDomain;
+    property Forms: THTMLElementCollection read GetForms;
+    property Images: THTMLElementCollection read GetImages;
+    property Scripts: THTMLElementCollection read GetScripts;
+
+
+    function GetElementById(v: string): THTMLElement;
+    function GetElementsByClassName(classname: string): THTMLElementCollection;
+    function GetElementsByName(name: string): THTMLElementCollection;
+    function GetElementsByTagName(tagName: string): THTMLElementCollection;
+    function CreateElement(eTag: string): THTMLElement;
+    function QuerySelector(Query: string): THTMLElementCollection;
+  end;
+
+  THTMLElementCollection = class(TList)
+  private
+    function Get(Index: Integer): THTMLElement;
+    procedure Put(Index: Integer; Item: THTMLElement);
+  public
+    property Item[Index: Integer]: THTMLElement read Get write Put; default;
+  end;
+
+  THTMLElement = class(TObject)
+  private
+    FElement: IDispatch;
+  public
+    property Element: IDispatch read FElement write FElement;
+  end;
+
+
+
+implementation
+
+uses Main;
+
+function CreateHtmlElement(IElement: IHTMLElement): THTMLElement;
+var
+  el: THTMLElement;
+begin
+
+  el:= THTMLElement.Create;
+  el.Element := IElement;
+  Result := el;
+end;
+
+function TDocument.CreateElement(eTag: string): THTMLElement;
+var
+  IElement: IHTMLElement;
+begin
+  IElement := (Self.Document as IHTMLDocument2).createElement(eTag);
+  Result := CreateHtmlElement(IElement);
+end;
+
+function TDocument.GetActiveElement: THTMLElement;
+begin
+  Result := CreateHtmlElement((Self.Document as IHTMLDocument2).activeElement);
+end;
+
+function TDocument.GetAnchors: THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IAnchors: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IAnchors := (Document as IHTMLDocument3).getElementsByTagName('A');
+  for I := 0 to IAnchors.length -1 do
+  begin
+    IElement := IAnchors.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+end;
+
+function TDocument.GetBody: THTMLElement;
+begin
+  Result := CreateHtmlElement((Document as IHTMLDocument2).body);
+
+end;
+
+function TDocument.GetElementById(v: string): THTMLElement;
+begin
+  Result := CreateHtmlElement((Self.Document as IHTMLDocument3).getElementById(v));
+end;
+
+function TDocument.GetElementsByClassName(
+  classname: string): THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IElements := (Document as IHTMLDocument7).getElementsByClassName(classname);
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.GetElementsByName(name: string): THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IElements := (Document as IHTMLDocument3).getElementsByName(name);
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+end;
+
+function TDocument.GetElementsByTagName(
+  tagName: string): THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IElements := (Document as IHTMLDocument3).getElementsByTagName(tagName);
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.GetForms: THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IForms: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IForms := (Document as IHTMLDocument2).forms;
+  for I := 0 to IForms.length -1 do
+  begin
+    IElement := IForms.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.GetHead: THTMLElement;
+begin
+  Result := CreateHtmlElement((Self.Document as IHTMLDocument7).head);
+end;
+
+function TDocument.GetImages: THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IElements := (Document as IHTMLDocument3).getElementsByTagName('img');
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.GetScripts: THTMLElementCollection;
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+begin
+
+  Collection:= THTMLElementCollection.Create;
+  IElements := (Document as IHTMLDocument3).getElementsByTagName('script');
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.QuerySelector(Query: string): THTMLElementCollection;
+var
+  Collection: THTMLElementCollection;
+  IElements: IHTMLElementCollection;
+  IElement: IHTMLElement;
+  I: Integer;
+  V: Variant;
+begin
+  Collection:= THTMLElementCollection.Create;
+  //IElements := (Document as IHTMLDocument2).
+  for I := 0 to IElements.length -1 do
+  begin
+    IElement := IElements.item(I, EmptyParam) as IHTMLElement;
+    Collection.Add(CreateHtmlElement(IElement));
+  end;
+  Result := Collection;
+
+end;
+
+function TDocument.GetCharset: string;
+begin
+  Result := (Document as IHTMLDocument2).charset;
+end;
+
+procedure TDocument.SetCharset(val: string);
+begin
+  (Document as IHTMLDocument2).charset := val;
+end;
+
+function TDocument.GetCookie: string;
+begin
+  Result := (Document as IHTMLDocument2).cookie;
+end;
+
+function TDocument.GetDomain: string;
+begin
+  Result :=(Document as IHTMLDocument2).domain;
+end;
+
+procedure TDocument.SetCookie(val: string);
+begin
+  (Document as IHTMLDocument2).cookie := val;
+end;
+
+{ THTMLElementCollection }
+
+function THTMLElementCollection.Get(Index: Integer): THTMLElement;
+begin
+  Result := THTMLElement(Items[Index]) ;
+end;
+
+procedure THTMLElementCollection.Put(Index: Integer; Item: THTMLElement);
+begin
+  Insert(Index, Item);
+end;
+
+end.

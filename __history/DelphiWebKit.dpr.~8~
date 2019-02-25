@@ -1,0 +1,21 @@
+program DelphiWebKit;
+
+uses
+  Vcl.Forms,
+  Main in 'Main.pas' {MainForm},
+  Lib in 'lib\Lib.pas',
+  JavascriptObject in 'lib\JavascriptObject.pas',
+  uPSI_JavascriptObject in 'lib\uPSI_JavascriptObject.pas',
+  Utils in 'lib\Utils.pas',
+  SQLConnection in 'lib\SQLConnection.pas',
+  uPSI_SQLConnection in 'lib\uPSI_SQLConnection.pas',
+  document in 'lib\DOM\document.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+end.

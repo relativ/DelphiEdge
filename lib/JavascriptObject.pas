@@ -1,0 +1,213 @@
+unit JavascriptObject;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Winapi.ActiveX, System.Win.ComObj, MSHTML;
+
+
+type
+
+ // PJSObject = ^TJSObject;
+
+  TJSObject = class(TObject)
+  private
+    FName: string;
+    FActualJSPoint: Variant;
+  protected
+
+    destructor Destroy; override;
+  public
+    property Name: string read FName write FName;
+    property ActualJSPoint: Variant read FActualJSPoint write FActualJSPoint;
+
+    function GetObject(PropertyNameStr: string): TJSObject;
+    function GetValue(PropertyNameStr: string): string;
+    procedure SetValue(PropertyName: string; Value: string);
+  end;
+
+
+
+implementation
+
+uses Main;
+
+destructor TJSObject.Destroy;
+begin
+  inherited;
+end;
+
+function TJSObject.GetObject(PropertyNameStr: string): TJSObject;
+var
+  ValueEx: IDispatchEx;
+  vPropertyValue: OleVariant;
+  basicType  : Integer;
+  DispatchIdOfProperty: integer;
+  Temp: TExcepInfo;
+  Params:TDispParams;
+  Window: IHTMLWindow2;
+  sIDList: TStringList;
+  I: Integer;
+  JSObject: TJSObject;
+begin
+  if Trim(Self.Name) <> '' then
+  begin
+    sIDList:= TStringList.Create;
+    sIDList.Text := StringReplace(Self.Name + '|' + PropertyNameStr, '|', #13, [rfReplaceAll]);
+
+    Window:= (MainForm.Browser.ControlInterface.Document as IHTMLDocument2).parentWindow;
+    Assert(Assigned(Window));
+
+    vPropertyValue := Window;
+    for I := 0 to sIDList.Count -1 do
+    begin
+      Supports( IDispatch(vPropertyValue), IDispatchEx, ValueEx );
+      ValueEx.GetDispID(PWideChar(sIDList[I]), fdexNameCaseSensitive, DispatchIdOfProperty);
+      ValueEx.InvokeEx(DispatchIdOfProperty, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, @Params, vPropertyValue, Temp, nil);
+
+    end;
+    sIDList.Free;
+  end else begin
+    Supports( IDispatch(Self.ActualJSPoint), IDispatchEx, ValueEx );
+    ValueEx.GetDispID(PWideChar(PropertyNameStr), fdexNameCaseSensitive, DispatchIdOfProperty);
+    ValueEx.InvokeEx(DispatchIdOfProperty, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, @Params, vPropertyValue, Temp, nil);
+  end;
+
+  //vPropertyValue := GetDispatchPropValue((ValueEx as IDispatchEx), PropertyName);
+  basicType := VarType(vPropertyValue) and VarTypeMask;
+
+  // Set a string to match the type
+  case basicType of
+    varDispatch : begin
+      Supports( IDispatch(vPropertyValue), IDispatchEx, ValueEx );
+      //JSObject := TJSObject(PJSObject(@ValueEx)^);
+      JSObject := TJSObject.Create;
+      JSObject.ActualJSPoint := vPropertyValue;
+      if Trim(Self.Name) <> '' then
+        JSObject.Name := Self.Name + '|' + PropertyNameStr;
+      Result := JSObject;
+
+    end
+    else Result := nil;
+  end;
+
+ // sIDList.Free;
+
+end;
+
+function TJSObject.GetValue(PropertyNameStr: string): string;
+var
+  ValueEx: IDispatchEx;
+  vPropertyValue: OleVariant;
+  basicType  : Integer;
+  DispatchIdOfProperty: integer;
+  Temp: TExcepInfo;
+  Params:TDispParams;
+  Window: IHTMLWindow2;
+  sIDList: TStringList;
+  I: Integer;
+begin
+  if Trim(Self.Name) <> '' then
+  begin
+    sIDList:= TStringList.Create;
+    sIDList.Text := StringReplace(Self.Name + '|' + PropertyNameStr, '|', #13, [rfReplaceAll]);
+
+    Window:= (MainForm.Browser.ControlInterface.Document as IHTMLDocument2).parentWindow;
+    Assert(Assigned(Window));
+
+    vPropertyValue := Window;
+    for I := 0 to sIDList.Count -1 do
+    begin
+      Supports( IDispatch(vPropertyValue), IDispatchEx, ValueEx );
+      ValueEx.GetDispID(PWideChar(sIDList[I]), fdexNameCaseSensitive, DispatchIdOfProperty);
+      ValueEx.InvokeEx(DispatchIdOfProperty, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, @Params, vPropertyValue, Temp, nil);
+
+    end;
+    sIDList.Free;
+  end else begin
+
+    Supports( IDispatch(Self.ActualJSPoint), IDispatchEx, ValueEx );
+
+    ValueEx.GetDispID(PWideChar(PropertyNameStr), fdexNameCaseSensitive, DispatchIdOfProperty);
+    ValueEx.InvokeEx(DispatchIdOfProperty, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, @Params, vPropertyValue, Temp, nil);
+
+  end;
+  //vPropertyValue := GetDispatchPropValue((ValueEx as IDispatchEx), PropertyName);
+  basicType := VarType(vPropertyValue) and VarTypeMask;
+
+  // Set a string to match the type
+  case basicType of
+    varDispatch : Result := '[object]';
+    else Result := vPropertyValue;
+  end;
+
+end;
+
+procedure TJSObject.SetValue(PropertyName: string; Value: string);
+var
+  ExcepInfo: TExcepInfo;
+  Params:TDispParams;
+  Status: HResult;
+  IDispId: SYSINT;
+  ValueEx: IDispatchEx;
+  sIDList: TStringList;
+  Window: IHTMLWindow2;
+  vPropertyValue: OleVariant;
+  I: integer;
+  VValue: OleVariant;
+const
+  DispIDArgs: Longint = DISPID_PROPERTYPUT;
+  IID_NULL: TGUID = '{00000000-0000-0000-0000-000000000000}';
+begin
+  VValue:= Value;
+  if Trim(Self.Name) <> '' then
+  begin
+    sIDList:= TStringList.Create;
+    sIDList.Text := StringReplace(Self.Name + '|' + PropertyName, '|', #13, [rfReplaceAll]);
+
+    Window:= (MainForm.Browser.ControlInterface.Document as IHTMLDocument2).parentWindow;
+    Assert(Assigned(Window));
+
+    vPropertyValue := Window;
+    for I := 0 to sIDList.Count -1 do
+    begin
+      Supports( IDispatch(vPropertyValue), IDispatchEx, ValueEx );
+      ValueEx.GetDispID(PWideChar(sIDList[I]), fdexNameCaseSensitive, IDispId);
+      if PropertyName = sIDList[I] then
+      begin
+        with Params do
+        begin
+          rgvarg := @VValue;
+          rgdispidNamedArgs := @DispIDArgs;
+          cArgs := 1;
+          cNamedArgs := 1;
+        end;
+        ValueEx.GetIDsOfNames(IID_NULL, @PropertyName, 1, LOCALE_USER_DEFAULT, @IDispID );
+        ValueEx.Invoke(IDispId, GUID_NULL, 0, DISPATCH_PROPERTYPUT, Params, nil, @ExcepInfo, nil);
+      end
+      else
+        ValueEx.InvokeEx(IDispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, @Params, vPropertyValue, ExcepInfo, nil);
+
+    end;
+    sIDList.Free;
+  end else begin
+    with Params do
+    begin
+      rgvarg := @VValue;
+      rgdispidNamedArgs := @DispIDArgs;
+      cArgs := 1;
+      cNamedArgs := 1;
+    end;
+
+    Supports( IDispatch(Self.ActualJSPoint), IDispatchEx, ValueEx );
+
+    ValueEx.GetDispID(PWideChar(PropertyName), fdexNameCaseSensitive, IDispId);
+    ValueEx.Invoke(IDispId, GUID_NULL, 0, DISPATCH_PROPERTYPUT, Params, nil, @ExcepInfo, nil)
+
+  end;
+
+end;
+
+
+end.
