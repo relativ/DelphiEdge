@@ -27,8 +27,8 @@ holder
   
   var element: THTMLElement;
   element := document.CreateElement('a');
-  element.setAttribute('href', 'http://www.hurriyet.com');
-  element.InnerText := 'hurriyet Haber Sitesi';
+  element.setAttribute('href', 'http://www.sahibinden.com');
+  element.InnerText := 'sahibinden.com';
   document.body.AppendElement(element);
   showmessage('ddddd');
   showmessage(window.location.href);

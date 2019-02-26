@@ -12,7 +12,7 @@ uses
   uPSComponent_Default, uPSComponent_Controls, uPSRuntime, uPSPreProcessor,
   System.SyncObjs, System.Math,Vcl.AppEvnts,
   System.Generics.Collections, SynHighlighterCSS, uPSComponent_DB, System.Win.ComObj,
-  JavascriptObject, Utils, DOM;
+  JavascriptObject, Utils, DOM, Registry;
 
 const
   CEF_SHOWKEYBOARD     = WM_APP + $B01;
@@ -63,6 +63,8 @@ type
       var Cancel: WordBool);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure BrowserNewWindow2(ASender: TObject; var ppDisp: IDispatch;
+      var Cancel: WordBool);
   private
     RunTimeConstants: TStringList;
     RunTimeVariables: TDictionary<string, string>;
@@ -269,6 +271,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   JSObject: TPSImport_JavascriptObject;
   DOMImport: TPSImport_DOM;
+  Reg: TRegistry;
 begin
   JSObject:= TPSImport_JavascriptObject.Create(nil);
   (ce.Plugins.Add as TPSPluginItem).Plugin := JSObject;
@@ -279,6 +282,14 @@ begin
   TPlugins.DLLPlugins();
 
   Browser.Silent := True;
+
+  //Get IE 11 (Edge) instance
+  Reg:= TRegistry.Create;
+  Reg.RootKey := HKEY_CURRENT_USER;
+  Reg.OpenKey('Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION', true);
+  Reg.WriteInteger(ExtractFileName(Application.ExeName), 11001);
+  Reg.CloseKey;
+  Reg.Free;
 
 end;
 
@@ -642,6 +653,14 @@ begin
       StrListFunctionProcedure.Free;
     end;
   end;
+
+end;
+
+procedure TMainForm.BrowserNewWindow2(ASender: TObject; var ppDisp: IDispatch;
+  var Cancel: WordBool);
+begin
+ //ppDisp := Browser.DefaultInterface;
+ //Cancel := true;
 
 end;
 

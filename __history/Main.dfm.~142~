@@ -77,6 +77,7 @@ object MainForm: TMainForm
         Align = alClient
         TabOrder = 0
         OnBeforeNavigate2 = BrowserBeforeNavigate2
+        OnNewWindow2 = BrowserNewWindow2
         OnDocumentComplete = BrowserDocumentComplete
         ExplicitTop = -2
         ExplicitHeight = 329
@@ -95,7 +96,6 @@ object MainForm: TMainForm
         Align = alBottom
         ScrollBars = ssVertical
         TabOrder = 1
-        ExplicitTop = 244
       end
     end
     object TabSheetCode: TTabSheet

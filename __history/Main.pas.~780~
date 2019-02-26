@@ -17,7 +17,7 @@ uses
 const
   CEF_SHOWKEYBOARD     = WM_APP + $B01;
   CEF_HIDEKEYBOARD     = WM_APP + $B02;
-  MINIBROWSER_VISITDOM_FULL               = WM_APP + $102;
+  MINIBROWSER_VISITDOM_FULL = WM_APP + $102;
 
 type
   TMainForm = class(TForm)
@@ -277,6 +277,8 @@ begin
   (ce.Plugins.Add as TPSPluginItem).Plugin := DOMImport;
 
   TPlugins.DLLPlugins();
+
+  Browser.Silent := True;
 
 end;
 

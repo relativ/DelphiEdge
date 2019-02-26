@@ -100,10 +100,6 @@ object MainForm: TMainForm
     object TabSheetCode: TTabSheet
       Caption = 'Code'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object MemoCode: TSynMemo
         Left = 0
         Top = 0
