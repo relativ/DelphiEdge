@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.685,C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\ProjectGroup1.groupproj=D:\Projeler\PascalDHTML\PascalDHTML.groupproj</Transaction>
+    <Transaction>2019.02.26 06:54:04.000,D:\Projeler\PascalDHTML\Edge.groupproj=D:\Projeler\PascalDHTML\PascalDHTML.groupproj</Transaction>
+  </Transactions>
+	<Default.Personality>
+		<Projects ActiveProject="D:\Projeler\PascalDHTML\Edge.dproj"/>
+	</Default.Personality>
+</BorlandProject>

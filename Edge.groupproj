@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0C275890-8292-4E89-B5C1-6974908FB044}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Edge.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="extensions\DB\DataAccess.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Edge">
+        <MSBuild Projects="Edge.dproj"/>
+    </Target>
+    <Target Name="Edge:Clean">
+        <MSBuild Projects="Edge.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Edge:Make">
+        <MSBuild Projects="Edge.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PascalScript_Core_D25">
+        <MSBuild Projects="D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj"/>
+    </Target>
+    <Target Name="PascalScript_Core_D25:Clean">
+        <MSBuild Projects="D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PascalScript_Core_D25:Make">
+        <MSBuild Projects="D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DataAccess">
+        <MSBuild Projects="extensions\DB\DataAccess.dproj"/>
+    </Target>
+    <Target Name="DataAccess:Clean">
+        <MSBuild Projects="extensions\DB\DataAccess.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DataAccess:Make">
+        <MSBuild Projects="extensions\DB\DataAccess.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Edge;PascalScript_Core_D25;DataAccess"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Edge:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Edge:Make;PascalScript_Core_D25:Make;DataAccess:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
