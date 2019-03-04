@@ -1,0 +1,19 @@
+unit XMLDefines;
+
+interface
+
+uses System.SysUtils;
+
+type
+  TXmlNodeType = (ntElement, ntText, ntCData, ntProcessingInstr, ntComment, ntDocument, ntDocType, ntXmlDecl);
+  TXmlNodeTypes = set of TXmlNodeType;
+  TXmlAttributeType = (atValue, atSingle);
+  TXmlOptions = set of (doNodeAutoIndent, doCompact, doParseProcessingInstr, doPreserveWhiteSpace, doCaseInsensitive,
+    doWriteBOM);
+  TExtractTextOptions = set of (etoDeleteStopChar, etoStopString);
+
+  TStreamReaderFillBuffer = procedure(var Encoding: TEncoding) of object;
+
+implementation
+
+end.

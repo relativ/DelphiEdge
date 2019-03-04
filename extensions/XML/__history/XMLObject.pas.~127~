@@ -1,0 +1,54 @@
+unit XMLObject;
+
+interface
+
+uses
+  Classes, SysUtils, Generics.Defaults, Generics.Collections, Rtti, XMLDoc;
+
+type
+  TXMLObject = class(TObject)
+  private
+    FXMLDocument: TXMLDocument;
+  protected
+    destructor Destroy; override;
+  public
+    constructor Create;
+    { IXMLDocument Methods }
+    function AddChild(const TagName: string): IXMLNode; overload;
+    function AddChild(const TagName, NamespaceURI: string): IXMLNode; overload;
+    function CreateElement(const TagOrData, NamespaceURI: string): IXMLNode;
+    function CreateNode(const NameOrData: string;
+      NodeType: TNodeType = ntElement; const AddlData: string = ''): IXMLNode;
+    function GetDocBinding(const TagName: string;
+      DocNodeClass: TClass; NamespaceURI: string = ''): IXMLNode;
+    function IsEmptyDoc: Boolean;
+    procedure LoadFromFile(const AFileName: string = '');
+    procedure LoadFromStream(const Stream: TStream);
+{$IFNDEF NEXTGEN}
+    procedure LoadFromXML(const XML: AnsiString); overload;
+{$ENDIF !NEXTGEN}
+    procedure LoadFromXML(const XML: string); overload;
+    procedure Refresh;
+    procedure SaveToFile(const AFileName: string = ''); dynamic;
+    procedure SaveToStream(const Stream: TStream);
+    procedure SaveToXML(var XML: string); overload;
+    // Next overload is for backwards compatibility when string was a WideString
+{$IFNDEF NEXTGEN}
+    procedure SaveToXML(var XML: WideString); overload;
+    procedure SaveToXML(var XML: UTF8String); overload;
+{$ENDIF !NEXTGEN}
+    { Properties }
+    property ChildNodes: IXMLNodeList read GetChildNodes;
+    property DocumentElement: IXMLNode read GetDocumentElement write SetDocumentElement;
+    property Encoding: string read GetEncoding write SetEncoding;
+    property Node: IXMLNode read GetDocumentNode;
+    property Version: string read GetVersion write SetVersion;
+  published
+    property Active: Boolean read GetActive write SetActive default False;
+    property FileName: string read GetFileName write SetFileName;
+    property NodeIndentStr: string read GetNodeIndentStr write SetNodeIndentStr stored NodeIndentStored;
+    property XML: TStrings read GetXML write SetXML stored IsXMLStored;
+  end;
+implementation
+
+end.

@@ -12,6 +12,9 @@
         <Projects Include="extensions\DB\DataAccess.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="extensions\XML\XML.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="DataAccess:Make">
         <MSBuild Projects="extensions\DB\DataAccess.dproj" Targets="Make"/>
     </Target>
+    <Target Name="XML">
+        <MSBuild Projects="extensions\XML\XML.dproj"/>
+    </Target>
+    <Target Name="XML:Clean">
+        <MSBuild Projects="extensions\XML\XML.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XML:Make">
+        <MSBuild Projects="extensions\XML\XML.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Edge;PascalScript_Core_D25;DataAccess"/>
+        <CallTarget Targets="Edge;PascalScript_Core_D25;DataAccess;XML"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Edge:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean"/>
+        <CallTarget Targets="Edge:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean;XML:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Edge:Make;PascalScript_Core_D25:Make;DataAccess:Make"/>
+        <CallTarget Targets="Edge:Make;PascalScript_Core_D25:Make;DataAccess:Make;XML:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

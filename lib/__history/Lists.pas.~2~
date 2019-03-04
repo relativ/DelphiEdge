@@ -1,0 +1,131 @@
+unit Lists;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Dialogs;
+
+type
+  TDataList = class(TObject)
+  private
+    FList: TList;
+  protected
+    function Get(Index: Integer): Variant;
+    procedure Put(Index: Integer; Item: Variant);
+    procedure SetCount(Value: integer);
+    function GetCount: integer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Add(Item: Variant): Integer;
+    procedure Clear; virtual;
+    procedure Delete(Index: Integer);
+    function Expand: TDataList;
+    function First: Variant; inline;
+    function IndexOf(Item: Variant): Integer;
+    procedure Insert(Index: Integer; Item: Variant);
+    function Last: Variant;
+    procedure Move(CurIndex, NewIndex: Integer);
+    function Remove(Item: Variant): Integer; inline;
+    procedure Pack;
+    property Count: Integer read GetCount write SetCount;
+    property Items[Index: Integer]: Variant read Get write Put; default;
+
+  end;
+
+implementation
+
+{ TDataList }
+
+function TDataList.Add(Item: Variant): Integer;
+begin
+  FList.Add(@Item);
+end;
+
+procedure TDataList.Clear;
+begin
+  FList.Clear;
+end;
+
+constructor TDataList.Create;
+begin
+  FList := TList.Create;
+end;
+
+procedure TDataList.Delete(Index: Integer);
+begin
+  FList.Delete(Index);
+end;
+
+destructor TDataList.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TDataList.Expand: TDataList;
+var
+  FDataList: TDataList;
+begin
+  FDataList:= TDataList.Create;
+  FDataList.FList := FList.Expand;
+  Result := FDataList;
+end;
+
+function TDataList.First: Variant;
+begin
+
+end;
+
+function TDataList.Get(Index: Integer): Variant;
+begin
+
+end;
+
+function TDataList.GetCount: integer;
+begin
+
+end;
+
+function TDataList.IndexOf(Item: Variant): Integer;
+begin
+
+end;
+
+procedure TDataList.Insert(Index: Integer; Item: Variant);
+begin
+
+end;
+
+function TDataList.Last: Variant;
+begin
+
+end;
+
+procedure TDataList.Move(CurIndex, NewIndex: Integer);
+begin
+
+end;
+
+procedure TDataList.Pack;
+begin
+
+end;
+
+procedure TDataList.Put(Index: Integer; Item: Pointer);
+begin
+
+end;
+
+function TDataList.Remove(Item: Variant): Integer;
+begin
+
+end;
+
+procedure TDataList.SetCount(Value: integer);
+begin
+
+end;
+
+end.

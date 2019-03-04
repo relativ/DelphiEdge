@@ -1,0 +1,19 @@
+unit XMLObject;
+
+interface
+
+uses
+  Classes, SysUtils, Generics.Defaults, Generics.Collections, Rtti, XMLDoc;
+
+type
+  TXMLObject = class(TObject)
+    private
+
+    protected
+
+    public
+
+  end;
+implementation
+
+end.

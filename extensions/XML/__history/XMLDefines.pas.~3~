@@ -1,0 +1,89 @@
+unit XMLDefines;
+
+interface
+
+uses System.SysUtils;
+
+type
+  TXmlNodeType = (ntElement, ntText, ntCData, ntProcessingInstr, ntComment, ntDocument, ntDocType, ntXmlDecl);
+  TXmlNodeTypes = set of TXmlNodeType;
+  TXmlAttributeType = (atValue, atSingle);
+  TXmlOptions = set of (doNodeAutoIndent, doCompact, doParseProcessingInstr, doPreserveWhiteSpace, doCaseInsensitive,
+    doWriteBOM);
+  TExtractTextOptions = set of (etoDeleteStopChar, etoStopString);
+
+  TStreamReaderFillBuffer = procedure(var Encoding: TEncoding) of object;
+
+  TXmlNode = class(TObject)
+  private
+  protected
+    [Weak] FDocument: TXmlVerySimple;
+    procedure SetDocument(Value: TXmlVerySimple);
+    function GetAttr(const AttrName: String): String; virtual;
+    procedure SetAttr(const AttrName: String; const AttrValue: String); virtual;
+  public
+    ///	<summary> All attributes of the node </summary>
+    AttributeList: TXmlAttributeList;
+    ///	<summary> List of child nodes, never NIL </summary>
+    ChildNodes: TXmlNodeList;
+    ///	<summary> Name of the node </summary>
+    Name: String; // Node name
+    ///	<summary> The node type, see TXmlNodeType </summary>
+    NodeType: TXmlNodeType;
+    ///	<summary> Parent node, may be NIL </summary>
+    [Weak] Parent: TXmlNode;
+    ///	<summary> Text value of the node </summary>
+    Text: String;
+    /// <summary> Creates a new XML node </summary>
+    constructor Create(ANodeType: TXmlNodeType = ntElement); virtual;
+    ///	<summary> Removes the node from its parent and frees all of its childs </summary>
+    destructor Destroy; override;
+    ///	<summary> Clears the attributes, the text and all of its child nodes (but not the name) </summary>
+    procedure Clear;
+    ///	<summary> Find a child node by its name </summary>
+    function Find(const Name: String; NodeTypes: TXmlNodeTypes = [ntElement]): TXmlNode; overload; virtual;
+    ///	<summary> Find a child node by name and attribute name </summary>
+    function Find(const Name, AttrName: String; NodeTypes: TXmlNodeTypes = [ntElement]): TXmlNode; overload; virtual;
+    ///	<summary> Find a child node by name, attribute name and attribute value </summary>
+    function Find(const Name, AttrName, AttrValue: String; NodeTypes: TXmlNodeTypes = [ntElement]): TXmlNode; overload; virtual;
+    ///	<summary> Return a list of child nodes with the given name and (optional) node types </summary>
+    function FindNodes(const Name: String; NodeTypes: TXmlNodeTypes = [ntElement]): TXmlNodeList; virtual;
+    ///	<summary> Returns True if the attribute exists </summary>
+    function HasAttribute(const AttrName: String): Boolean; virtual;
+    ///	<summary> Returns True if a child node with that name exits </summary>
+    function HasChild(const Name: String; NodeTypes: TXmlNodeTypes = [ntElement]): Boolean; virtual;
+    ///	<summary> Add a child node with an optional NodeType (default: ntElement)</summary>
+    function AddChild(const AName: String; ANodeType: TXmlNodeType = ntElement): TXmlNode; virtual;
+    ///	<summary> Insert a child node at a specific position with a (optional) NodeType (default: ntElement)</summary>
+    function InsertChild(const Name: String; Position: Integer; NodeType: TXmlNodeType = ntElement): TXmlNode; virtual;
+    ///	<summary> Fluent interface for setting the text of the node </summary>
+    function SetText(const Value: String): TXmlNode; virtual;
+    ///	<summary> Fluent interface for setting the node attribute given by attribute name and attribute value </summary>
+    function SetAttribute(const AttrName, AttrValue: String): TXmlNode; virtual;
+    ///	<summary> Returns first child or NIL if there aren't any child nodes </summary>
+    function FirstChild: TXmlNode; virtual;
+    ///	<summary> Returns last child node or NIL if there aren't any child nodes </summary>
+    function LastChild: TXmlNode; virtual;
+    ///	<summary> Returns next sibling </summary>
+    function NextSibling: TXmlNode; overload; virtual;
+    ///	<summary> Returns previous sibling </summary>
+    function PreviousSibling: TXmlNode; overload; virtual;
+    ///	<summary> Returns True if the node has at least one child node </summary>
+    function HasChildNodes: Boolean; virtual;
+    ///	<summary> Returns True if the node has a text content and no child nodes </summary>
+    function IsTextElement: Boolean; virtual;
+    ///	<summary> Fluent interface for setting the node type </summary>
+    function SetNodeType(Value: TXmlNodeType): TXmlNode; virtual;
+    ///	<summary> Attributes of a node, accessible by attribute name (case insensitive) </summary>
+    property Attributes[const AttrName: String]: String read GetAttr write SetAttr;
+    ///	<summary> The xml document of the node </summary>
+    property Document: TXmlVerySimple read FDocument write SetDocument;
+    ///	<summary> The node name, same as property Name </summary>
+    property NodeName: String read Name write Name;
+    ///	<summary> The node text, same as property Text </summary>
+    property NodeValue: String read Text write Text;
+  end;
+
+implementation
+
+end.

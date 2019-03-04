@@ -98,7 +98,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_UsePackage>PascalScript_Core_D25</DCC_UsePackage>
-        <UsePackages>true</UsePackages>
         <DCC_UnitSearchPath>D:\Projeler\PascalDHTML\Win32\Debug;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -136,14 +135,19 @@
             <Form>MainForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="lib\Lib.pas"/>
-        <DCCReference Include="lib\JavascriptObject.pas"/>
-        <DCCReference Include="lib\uPSI_JavascriptObject.pas"/>
-        <DCCReference Include="lib\Utils.pas"/>
         <DCCReference Include="lib\DOM\DOM.pas"/>
         <DCCReference Include="lib\DOM\uPSI_DOM.pas"/>
-        <DCCReference Include="lib\JSEventObject.pas"/>
         <DCCReference Include="content\PluginBase.pas"/>
+        <DCCReference Include="lib\Classes\DialogList.pas"/>
+        <DCCReference Include="lib\Classes\Lists.pas"/>
+        <DCCReference Include="lib\Classes\uPSI_DialogList.pas"/>
+        <DCCReference Include="lib\Classes\uPSI_Lists.pas"/>
+        <DCCReference Include="lib\JavaScript\JavascriptObject.pas"/>
+        <DCCReference Include="lib\JavaScript\JSEventObject.pas"/>
+        <DCCReference Include="lib\JavaScript\uPSI_JavascriptObject.pas"/>
+        <DCCReference Include="lib\Lib.pas"/>
+        <DCCReference Include="lib\Utils.pas"/>
+        <DCCReference Include="lib\Classes\uPSI_TypeDefines.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

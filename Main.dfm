@@ -2,8 +2,8 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'MainForm'
-  ClientHeight = 398
-  ClientWidth = 631
+  ClientHeight = 432
+  ClientWidth = 617
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,15 +18,15 @@ object MainForm: TMainForm
   object PnlCenter: TPanel
     Left = 0
     Top = 0
-    Width = 631
-    Height = 357
+    Width = 617
+    Height = 391
     Align = alClient
     TabOrder = 0
   end
   object PnlBottom: TPanel
     Left = 0
-    Top = 357
-    Width = 631
+    Top = 391
+    Width = 617
     Height = 41
     Align = alBottom
     TabOrder = 1
@@ -55,14 +55,13 @@ object MainForm: TMainForm
       Height = 25
       Caption = 'Button1'
       TabOrder = 2
-      OnClick = Button1Click
     end
   end
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 631
-    Height = 357
+    Width = 617
+    Height = 391
     ActivePage = TabSheetBrowser
     Align = alClient
     TabOrder = 2
@@ -72,17 +71,17 @@ object MainForm: TMainForm
       object Browser: TWebBrowser
         Left = 0
         Top = 0
-        Width = 623
-        Height = 240
+        Width = 609
+        Height = 274
         Align = alClient
         TabOrder = 0
         OnBeforeNavigate2 = BrowserBeforeNavigate2
         OnNewWindow2 = BrowserNewWindow2
         OnDocumentComplete = BrowserDocumentComplete
-        ExplicitTop = -2
-        ExplicitHeight = 329
+        ExplicitLeft = -48
+        ExplicitTop = -56
         ControlData = {
-          4C00000064400000CE1800000000000000000000000000000000000000000000
+          4C000000F13E0000521C00000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -90,8 +89,8 @@ object MainForm: TMainForm
       end
       object MemoDebug: TMemo
         Left = 0
-        Top = 240
-        Width = 623
+        Top = 274
+        Width = 609
         Height = 89
         Align = alBottom
         ScrollBars = ssVertical
@@ -104,8 +103,8 @@ object MainForm: TMainForm
       object MemoCode: TSynMemo
         Left = 0
         Top = 0
-        Width = 623
-        Height = 329
+        Width = 609
+        Height = 363
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -209,10 +208,6 @@ object MainForm: TMainForm
     Left = 432
     Top = 96
   end
-  object SaveDialog: TSaveDialog
-    Left = 144
-    Top = 200
-  end
   object ApplicationEvents: TApplicationEvents
     Left = 144
     Top = 264
@@ -275,5 +270,9 @@ object MainForm: TMainForm
     EnableButtons = True
     Left = 428
     Top = 160
+  end
+  object SaveDialog: TSaveDialog
+    Left = 144
+    Top = 200
   end
 end
