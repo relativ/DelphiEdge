@@ -1,0 +1,31 @@
+unit Encryption;
+
+interface
+
+uses SysUtils ,Classes, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdIOHandler, IdGlobal, IdUDPBase,
+  IdUDPClient, IdHTTP, IdMultipartFormData;
+
+type
+
+  TSocketIOHandler = class(TObject)
+  private
+    FIOHandler: TIdIOHandler;
+  public
+    procedure SetIOHandler(IOHandler: TIdIOHandler);
+    procedure Write(Value: string);
+    procedure WriteLn(Value: string);
+    procedure WriteStream(Value: TStream; ASize: integer);
+    procedure ReadStream(AStream: TStream; AByteCount: integer = -1);
+    function ReadLn: string;
+  end;
+
+
+
+
+
+implementation
+
+
+
+end.

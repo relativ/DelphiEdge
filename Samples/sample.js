@@ -2,6 +2,8 @@
 <div id="holder">
 holder
 </div>
+<div id="delphifunction">
+</div>
 
 <script>
   var serkan = {"aaa": "merhaba serkan güneþ", "bbb": {"ccc": "hhhhhh"}};
@@ -13,7 +15,11 @@ holder
 	obj.merhaba.aloo  = test + '--->'+ test2;
 	return obj;
   }
+  window.onload = function(e) {
+	document.getElementById('delphifunction').innerHTML = window.external.run('deneme', {"deger":"merhaba deðer"});
+  }
 </script>
+
 
 <script type="text/pascal">
   import serkan;
@@ -73,5 +79,25 @@ holder
   end;
   
   document.GetElementById('testid').AttachEvent('onclick', 'fetchdb');
+  
+
+function deneme(val: variant): variant;
+var
+   jsobj: TJSObject;
+begin
+     showmessage('ddddd');
+     jsobj := JSDecode(val);
+     result := jsobj.GetValue('deger') + '<---';
+end;
+
+var s: string;
+var j : TJSON;
+s := '{"merhaba": "degerin", "aloo": {"ne": "var"}}';
+j := TJSON.Create();
+j:= j.parse(s);
+
+showmessage(j['merhaba'].AsString);
+showmessage(j['aloo']['ne'].AsString);
 
 </script>
+

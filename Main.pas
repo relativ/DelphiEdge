@@ -2,6 +2,7 @@
 
 interface
 
+
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SynEdit, SynMemo, Vcl.OleCtrls, SHDocVw,
@@ -13,7 +14,9 @@ uses
   System.SyncObjs, System.Math,Vcl.AppEvnts,
   System.Generics.Collections, SynHighlighterCSS, uPSComponent_DB, System.Win.ComObj,
   JavascriptObject, Utils, DOM, Registry, Data.DB, Datasnap.DBClient,
-  Soap.SOAPConn;
+  Soap.SOAPConn, Soap.InvokeRegistry, Soap.WSDLIntf, Soap.SOAPPasInv,
+  Soap.SOAPHTTPPasInv, IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, SHDocVw_EWB, EwbCore, EmbeddedWB;
 
 const
   CEF_SHOWKEYBOARD     = WM_APP + $B01;
@@ -26,10 +29,6 @@ type
     PnlBottom: TPanel;
     BtnOpen: TButton;
     OpenDialog: TOpenDialog;
-    PageControl1: TPageControl;
-    TabSheetBrowser: TTabSheet;
-    TabSheetCode: TTabSheet;
-    MemoCode: TSynMemo;
     SynHTMLSyn1: TSynHTMLSyn;
     SynPasSyn1: TSynPasSyn;
     SynMultiSyn1: TSynMultiSyn;
@@ -42,29 +41,37 @@ type
     BtnSave: TButton;
     ApplicationEvents: TApplicationEvents;
     Button1: TButton;
-    Browser: TWebBrowser;
     ce: TPSScriptDebugger;
     SynCssSyn1: TSynCssSyn;
     PSImport_Classes1: TPSImport_Classes;
     PSImport_Forms1: TPSImport_Forms;
     PSImport_StdCtrls1: TPSImport_StdCtrls;
-    MemoDebug: TMemo;
     SaveDialog: TSaveDialog;
+    PageControl: TPageControl;
+    TabSheetBrowser: TTabSheet;
+    MemoDebug: TMemo;
+    TabSheetCode: TTabSheet;
+    MemoCode: TSynMemo;
+    Browser: TEmbeddedWB;
     procedure TabSheetBrowserShow(Sender: TObject);
     procedure BtnOpenClick(Sender: TObject);
     procedure ceCompile(Sender: TPSScript);
     procedure ceExecute(Sender: TPSScript);
     procedure ceIdle(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
-    procedure BrowserDocumentComplete(ASender: TObject; const pDisp: IDispatch;
-      const URL: OleVariant);
     procedure FormCreate(Sender: TObject);
-    procedure BrowserBeforeNavigate2(ASender: TObject; const pDisp: IDispatch;
-      const [Ref] URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
-      var Cancel: WordBool);
     procedure FormDestroy(Sender: TObject);
     procedure BrowserNewWindow2(ASender: TObject; var ppDisp: IDispatch;
       var Cancel: WordBool);
+    procedure BrowserBeforeNavigate2(ASender: TObject; const pDisp: IDispatch;
+      var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
+      var Cancel: WordBool);
+    procedure BrowserGetExternal(Sender: TCustomEmbeddedWB;
+      var ppDispatch: IDispatch);
+    procedure BrowserDocumentComplete(ASender: TObject; const pDisp: IDispatch;
+      var URL: OleVariant);
+    procedure Button1Click(Sender: TObject);
+
   private
     RunTimeConstants: TStringList;
     RunTimeVariables: TDictionary<string, string>;
@@ -80,9 +87,13 @@ type
     function ParseIncludeJSVariables(line: string; ReturnList: TStringList): string;
     function VarTypeSetValues(V: Pointer; name: string; value: string ): string;
     function ParseLocalVariables(line: string; ReturnList: TDictionary<string, string>): string;
+    procedure LoadExternalDllPlugins(doc: IHTMLDocument3);
+    procedure DownloadAndLoadPlugin(url: string);
+    procedure CompileAndRun;
 
   protected
     __sPascalCodes: string;
+    bCompiled: boolean;
   public
     { Public declarations }
   end;
@@ -108,7 +119,8 @@ implementation
 {$R *.dfm}
 
 uses Lib, TypInfo, uPSI_JavascriptObject, uPSI_DOM, Lists, uPSI_Lists,
-PluginBase, DialogList, uPSI_DialogList, uPSI_TypeDefines;
+PluginBase, DialogList, uPSI_DialogList, uPSI_TypeDefines, ObjComAuto, ExternalObject,
+uPSI_djson, djson;
 
 
 //------------------------------------------------------------------------------
@@ -275,6 +287,7 @@ var
   DialogsObjects: TPSImport_DialogList;
   Reg: TRegistry;
   Import_TypeDefines: TPSImport_TypeDefines;
+  PSImport_djson: TPSImport_djson;
 begin
   JSObject:= TPSImport_JavascriptObject.Create(nil);
   (ce.Plugins.Add as TPSPluginItem).Plugin := JSObject;
@@ -291,6 +304,11 @@ begin
   Import_TypeDefines:= TPSImport_TypeDefines.Create(nil);
   (ce.Plugins.Add as TPSPluginItem).Plugin := Import_TypeDefines;
 
+  PSImport_djson:= TPSImport_djson.Create(nil);
+  (ce.Plugins.Add as TPSPluginItem).Plugin := PSImport_djson;
+
+
+
   TPlugins.DLLPlugins();
 
   Browser.Silent := True;
@@ -302,6 +320,9 @@ begin
   Reg.WriteInteger(ExtractFileName(Application.ExeName), 11001);
   Reg.CloseKey;
   Reg.Free;
+
+
+
 
 end;
 
@@ -436,14 +457,67 @@ begin
 end;
 
 
+procedure TMainForm.DownloadAndLoadPlugin(url: string);
+var
+  IdHTTP: TIdHTTP;
+  fs: TFileStream;
+  sTempPath, sPluginPath : string;
+  sList: TStringList;
+  tempFolder: array[0..MAX_PATH] of Char;
+begin
+  IdHTTP:= TIdHTTP.Create(nil);
+  sList := Explode(url, '/');
+  sPluginPath := ExtractFilePath(Application.ExeName) + sList[sList.Count - 1];
+  fs:= TFileStream.Create(sPluginPath, fmCreate);
+  try
+    fs.Position := 0;
+    IdHTTP.Get(url, fs);
+  finally
+    fs.Free;
+    TPlugins.AddPlugin(sPluginPath);
+    IdHTTP.Free;
+  end;
+end;
 
+procedure TMainForm.LoadExternalDllPlugins(doc : IHTMLDocument3);
+var
+  plugins: IHTMLElementCollection;
+  I: integer;
+  path, url: string;
+  sList: TStringList;
+begin
+  plugins := doc.getElementsByTagName('plugin');
+  for I := 0 to plugins.length -1 do
+  begin
+    if (plugins.item(I, EmptyParam) as IHTMLElement).getAttribute('type',0) = 'pascal/dll' then
+    begin
+      path := (plugins.item(I, EmptyParam) as IHTMLElement).getAttribute('src',0);
+      if Pos('http://', path) = 0 then
+      begin
+        url := (Browser.Document as IHTMLDocument2).url;
+        if Pos('.', url) > 0 then
+        begin
+          sList := Explode(url, '/');
+          sList.Delete(sList.Count -1);
+          url := Implode(sList, '/');
+        end;
+        if url[Length(url)] <> '/' then url := url + '/';
+        url := url + path;
+      end else
+        url := path;
+
+      DownloadAndLoadPlugin(url);
+
+    end;
+  end;
+end;
 
 function TMainForm.GetPascalScripts(doc : IHTMLDocument3): string;
 var
   scripts: IHTMLElementCollection;
   I: Integer;
-  Code: string;
-  sList: TStringList;
+  Code, sScriptSrcFilename: string;
+  sList, srcScript: TStringList;
 
 begin
 
@@ -455,6 +529,17 @@ begin
       if (scripts.item(I, EmptyParam) as IHTMLScriptElement).type_ = 'text/pascal' then
       begin
         Code := Code + (scripts.item(I, EmptyParam) as IHTMLScriptElement).text + chr(13);
+      end;
+
+      if ((scripts.item(I, EmptyParam) as IHTMLScriptElement).type_ = 'text/pascal') and
+        ((scripts.item(I, EmptyParam) as IHTMLScriptElement).src <> '') then
+      begin
+        sScriptSrcFilename := (scripts.item(I, EmptyParam) as IHTMLScriptElement).src;
+        sScriptSrcFilename := StringReplace(sScriptSrcFilename, 'file://', '', [rfReplaceAll]);
+        srcScript:= TStringList.Create;
+        srcScript.LoadFromFile(sScriptSrcFilename);
+        Code := Code + srcScript.Text + chr(13);
+        srcScript.Free;
       end;
     end;
 
@@ -576,10 +661,11 @@ end;
 
 
 procedure TMainForm.BrowserBeforeNavigate2(ASender: TObject;
-  const pDisp: IDispatch; const [Ref] URL, Flags, TargetFrameName, PostData,
+  const pDisp: IDispatch; var URL, Flags, TargetFrameName, PostData,
   Headers: OleVariant; var Cancel: WordBool);
 begin
-  if Assigned(BrowserDocument) then
+  bCompiled := false;
+ if Assigned(BrowserDocument) then
   begin
     BrowserDocument.Free;
     BrowserDocument := nil;
@@ -590,17 +676,19 @@ begin
     BrowserWindow.Free;
     BrowserWindow := nil;
   end;
-
 end;
 
-procedure TMainForm.BrowserDocumentComplete(ASender: TObject;
-  const pDisp: IDispatch; const URL: OleVariant);
+procedure TMainForm.CompileAndRun();
 var
   pascalCodes, sVariables, sConstants,
   VName, sConstantSetter, sTypeSection, sFunctionProcedures: string;
   RTVariableKeys: TArray<string>;
   I, a: Integer;
+  ppDispatch: IDispatch;
 begin
+  if bCompiled then
+    exit;
+
   if Assigned((Browser.Document as IHTMLDocument2).body) then
   begin
     BrowserWindow:= THTMLWindowElement.Create;
@@ -614,11 +702,13 @@ begin
     StrListFunctionProcedure := TStringList.Create();
     RunTimeVariables := TDictionary<string, string>.Create();
     try
+      LoadExternalDllPlugins(Browser.Document as IHTMLDocument3);
       pascalCodes := GetPascalScripts(Browser.Document as IHTMLDocument3);
       if (trim(pascalCodes) <> '') or (RunTimeVariables.Count > 0)
          or (RunTimeConstants.Count > 0) or (StrListRecordInterfaceClasses.Count > 0)
          or (StrListFunctionProcedure.Count > 0) then
       begin
+        bCompiled := true;
         RTVariableKeys := RunTimeVariables.Keys.ToArray();
         for VName in RTVariableKeys do
         begin
@@ -668,6 +758,19 @@ begin
 
 end;
 
+procedure TMainForm.BrowserDocumentComplete(ASender: TObject;
+  const pDisp: IDispatch; var URL: OleVariant);
+begin
+  CompileAndRun;
+end;
+
+procedure TMainForm.BrowserGetExternal(Sender: TCustomEmbeddedWB;
+  var ppDispatch: IDispatch);
+begin
+   CompileAndRun;
+   ppDispatch := TObjectDispatch.Create(TExternal.Create());
+end;
+
 procedure TMainForm.BrowserNewWindow2(ASender: TObject; var ppDisp: IDispatch;
   var Cancel: WordBool);
 begin
@@ -694,6 +797,20 @@ end;
 
 
 
+procedure TMainForm.Button1Click(Sender: TObject);
+var
+  s: string;
+  j : TJSON;
+begin
+
+s := '{"merhaba": "degerin", "aloo": {"ne": "var"}}';
+j := TJSON.Create();
+j:= j.parse(s);
+
+showmessage(j['merhaba'].AsString);
+showmessage(j['aloo']['ne'].AsString);
+end;
+
 procedure TMainForm.ceCompile(Sender: TPSScript);
 var
   I: integer;
@@ -701,8 +818,13 @@ var
 begin
   Sender.AddMethod(Self, @TLib.ShowMessage, 'procedure ShowMessage(const s: string);');
   Sender.AddMethod(Self, @TLib.JSDecode, 'function JSDecode(Value: Variant): TJSObject;');
-  Sender.AddMethod(Self, @TLib.SoapCall, 'function SoapCall(GuidStr: string; Addr: string): ISoapInvokable;');
+  Sender.AddMethod(Self, @TLib.VarToStr, 'function VarToStr(val: Variant): string;');
+  Sender.AddMethod(Self, @TLib.EncodeMd5, 'function EncodeMd5(const value: string): string;');
+  Sender.AddMethod(Self, @TLib.EncodeBase64, 'function EncodeBase64(const value: string): string;');
+  Sender.AddMethod(Self, @TLib.DecodeBase64, 'function DecodeBase64(const value: string): string;');
 
+
+// Sender.AddFunction(@TypeInfo, 'function TypeInfo(T: TypeIdentifier): Pointer');
 
   Sender.AddRegisteredVariable('Self', 'TForm');
   Sender.AddRegisteredVariable('Application', 'TApplication');

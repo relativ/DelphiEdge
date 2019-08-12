@@ -1,0 +1,37 @@
+unit ExternalObject;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Main;
+
+
+type
+  TMethodProc = function(): string of object;
+  {$METHODINFO ON}
+  TExternal = class
+  public
+    function run(const procName: string): string;
+  end;
+  {$METHODINFO OFF}
+
+implementation
+
+
+{ TExternal }
+
+function TExternal.run(const procName: string): string;
+var
+  iProc: Cardinal;
+  Meth: TMethod;
+begin
+  iProc := MainForm.ce.Exec.GetProc(procName);
+  Meth := MainForm.ce.Exec.GetProcAsMethod(iProc);
+  if Assigned(Meth.Code) then
+    TMethodProc(Meth)()
+  else
+    Result := '';
+end;
+
+end.

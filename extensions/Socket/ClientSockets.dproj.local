@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.847,D:\Projeler\PascalDHTML\extensions\Socket\Sockets.dproj=D:\Projeler\PascalDHTML\extensions\Socket\ClientSockets.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.996,C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Sockets.dproj=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Socket.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.603,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.268,D:\Projeler\PascalDHTML\extensions\Socket\uPSI_Socket.pas=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.914,=D:\Projeler\PascalDHTML\extensions\Socket\Socket.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.519,D:\Projeler\PascalDHTML\extensions\Socket\Sockets.dproj=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Sockets.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.432,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.341,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.700,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.471,C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Socket.dproj=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.874,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.047,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.134,=D:\Projeler\PascalDHTML\extensions\Socket\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

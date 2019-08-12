@@ -84,6 +84,7 @@ begin
     RegisterMethod('Function FieldByNameAsFloat( FieldName : string) : Double');
     RegisterMethod('Function FieldByNameAsInteger( FieldName : string) : Longint');
     RegisterMethod('Function FieldByNameAsString( FieldName : string) : String');
+    RegisterMethod('Function FieldByName( const FieldName : string) : TFieldNode');
     RegisterProperty('Active', 'boolean', iptrw);
     RegisterProperty('Connection', 'TDBConnection', iptrw);
     RegisterProperty('SQL', 'TStrings', iptr);
@@ -171,7 +172,7 @@ begin
     RegisterMethod('Constructor Create');
     RegisterMethod('Procedure Open( )');
     RegisterMethod('Procedure Close( )');
-    RegisterProperty('ProviderName', 'AnsiString', iptrw);
+    RegisterProperty('ProviderName', 'string', iptrw);
     RegisterProperty('UserName', 'string', iptrw);
     RegisterProperty('Password', 'string', iptrw);
     RegisterProperty('Server', 'string', iptrw);
@@ -533,11 +534,11 @@ procedure TDBConnectionUserName_R(Self: TDBConnection; var T: string);
 begin T := Self.UserName; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionProviderName_W(Self: TDBConnection; const T: AnsiString);
+procedure TDBConnectionProviderName_W(Self: TDBConnection; const T: string);
 begin Self.ProviderName := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionProviderName_R(Self: TDBConnection; var T: AnsiString);
+procedure TDBConnectionProviderName_R(Self: TDBConnection; var T: string);
 begin T := Self.ProviderName; end;
 
 (*----------------------------------------------------------------------------*)
@@ -562,6 +563,7 @@ begin
     RegisterMethod(@TDBQuery.FieldByNameAsFloat, 'FieldByNameAsFloat');
     RegisterMethod(@TDBQuery.FieldByNameAsInteger, 'FieldByNameAsInteger');
     RegisterMethod(@TDBQuery.FieldByNameAsString, 'FieldByNameAsString');
+    RegisterMethod(@TDBQuery.FieldByName, 'FieldByName');
     RegisterPropertyHelper(@TDBQueryActive_R,@TDBQueryActive_W,'Active');
     RegisterPropertyHelper(@TDBQueryConnection_R,@TDBQueryConnection_W,'Connection');
     RegisterPropertyHelper(@TDBQuerySQL_R,nil,'SQL');

@@ -10,20 +10,36 @@ type
 
   TPlugins = class
     class procedure DLLPlugins();
+    class procedure AddPlugin(path: string);
   end;
 
 implementation
 
 uses Main;
 
+class procedure TPlugins.AddPlugin(path: string);
+var
+   dllHandle : cardinal;
+   method: TRegisterPlugin;
+   plugin: TPSPlugin;
+begin
+  dllHandle := LoadLibrary(PWideChar(path));
+
+  @method := GetProcAddress(dllHandle, 'PSPluginCreate') ;
+  if Assigned (method) then
+  begin
+    plugin := method();
+    (MainForm.ce.Plugins.Add as TPSPluginItem).Plugin := plugin;
+  end;
+end;
+
 class procedure TPlugins.DLLPlugins();
 var
- dllHandle : cardinal;
+
  searchResult : TSearchRec;
  ExtensionPath: string;
  DLLHandleList: TList<UInt64>;
- method: TRegisterPlugin;
- plugin: TPSPlugin;
+
 begin
   DLLHandleList:= TList<UInt64>.Create;
 
@@ -33,14 +49,7 @@ begin
   begin
     repeat
 
-      dllHandle := LoadLibrary(PWideChar(ExtensionPath + searchResult.Name));
-
-      @method := GetProcAddress(dllHandle, 'PSPluginCreate') ;
-      if Assigned (method) then
-      begin
-        plugin := method();
-        (MainForm.ce.Plugins.Add as TPSPluginItem).Plugin := plugin;
-      end;
+       TPlugins.AddPlugin(ExtensionPath + searchResult.Name);
 
       //FreeLibrary(dllHandle) ;
     until FindNext(searchResult) <> 0;

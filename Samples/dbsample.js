@@ -7,7 +7,7 @@
 <script type="text/pascal">
   import serkan;
   import hasan;
-  self.caption := serkan.GetString('aaa') + ' -- ' + hasan;
+  self.caption := serkan.GetValue('aaa') + ' -- ' + hasan;
   
   var AEl: THTMLElement;
   AEl := document.CreateElement('div');

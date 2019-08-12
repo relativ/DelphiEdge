@@ -1,0 +1,25 @@
+unit Encryption;
+
+interface
+
+uses SysUtils ,Classes, IdGlobal, IdCoderMIME, IdHash, IdHashMessageDigest;
+
+type
+
+  THash = class(TObject)
+  private
+
+  public
+    class function md5(const value: string): string;
+    class function md5(const value: string): string;
+  end;
+
+
+
+
+
+implementation
+
+
+
+end.

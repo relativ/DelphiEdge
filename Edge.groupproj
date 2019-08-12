@@ -4,7 +4,7 @@
     </PropertyGroup>
     <ItemGroup>
         <Projects Include="Edge.dproj">
-            <Dependencies/>
+            <Dependencies>extensions\Socket\ClientSockets.dproj;extensions\XML\XML.dproj;extensions\DB\DataAccess.dproj</Dependencies>
         </Projects>
         <Projects Include="D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj">
             <Dependencies/>
@@ -15,6 +15,9 @@
         <Projects Include="extensions\XML\XML.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="extensions\Socket\ClientSockets.dproj">
+            <Dependencies>D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,13 +26,13 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="Edge">
+    <Target Name="Edge" DependsOnTargets="ClientSockets;XML;DataAccess">
         <MSBuild Projects="Edge.dproj"/>
     </Target>
-    <Target Name="Edge:Clean">
+    <Target Name="Edge:Clean" DependsOnTargets="ClientSockets:Clean;XML:Clean;DataAccess:Clean">
         <MSBuild Projects="Edge.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Edge:Make">
+    <Target Name="Edge:Make" DependsOnTargets="ClientSockets:Make;XML:Make;DataAccess:Make">
         <MSBuild Projects="Edge.dproj" Targets="Make"/>
     </Target>
     <Target Name="PascalScript_Core_D25">
@@ -59,14 +62,23 @@
     <Target Name="XML:Make">
         <MSBuild Projects="extensions\XML\XML.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ClientSockets" DependsOnTargets="PascalScript_Core_D25">
+        <MSBuild Projects="extensions\Socket\ClientSockets.dproj"/>
+    </Target>
+    <Target Name="ClientSockets:Clean" DependsOnTargets="PascalScript_Core_D25:Clean">
+        <MSBuild Projects="extensions\Socket\ClientSockets.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClientSockets:Make" DependsOnTargets="PascalScript_Core_D25:Make">
+        <MSBuild Projects="extensions\Socket\ClientSockets.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Edge;PascalScript_Core_D25;DataAccess;XML"/>
+        <CallTarget Targets="Edge;PascalScript_Core_D25;DataAccess;XML;ClientSockets"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Edge:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean;XML:Clean"/>
+        <CallTarget Targets="Edge:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean;XML:Clean;ClientSockets:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Edge:Make;PascalScript_Core_D25:Make;DataAccess:Make;XML:Make"/>
+        <CallTarget Targets="Edge:Make;PascalScript_Core_D25:Make;DataAccess:Make;XML:Make;ClientSockets:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

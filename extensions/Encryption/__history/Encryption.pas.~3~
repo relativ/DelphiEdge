@@ -1,0 +1,23 @@
+unit Encryption;
+
+interface
+
+uses SysUtils ,Classes, IdGlobal, IdHash, IdHashMessageDigest;
+
+type
+
+  THash = class(TObject)
+  private
+  public
+
+  end;
+
+
+
+
+
+implementation
+
+
+
+end.

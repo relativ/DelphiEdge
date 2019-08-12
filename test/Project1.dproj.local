@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2019.03.03 19:11:55.700,=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\FormUnit1.pas</Transaction>
+    <Transaction>2019.03.03 19:11:55.956,=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2019.03.03 19:12:03.192,=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\DenemeImpl.pas</Transaction>
+    <Transaction>2019.03.03 19:12:03.234,=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\DenemeIntf.pas</Transaction>
+    <Transaction>2019.03.03 19:12:58.765,D:\Projeler\PascalDHTML\test\DenemeIntf.pas=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\DenemeIntf.pas</Transaction>
+    <Transaction>2019.03.03 19:13:00.152,D:\Projeler\PascalDHTML\test\DenemeImpl.pas=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\DenemeImpl.pas</Transaction>
+    <Transaction>2019.03.03 19:13:01.124,D:\Projeler\PascalDHTML\test\FormUnit1.dfm=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\FormUnit1.dfm</Transaction>
+    <Transaction>2019.03.03 19:13:01.124,D:\Projeler\PascalDHTML\test\FormUnit1.pas=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\FormUnit1.pas</Transaction>
+    <Transaction>2019.03.03 19:13:02.129,D:\Projeler\PascalDHTML\test\WebModuleUnit1.pas=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2019.03.03 19:13:02.129,D:\Projeler\PascalDHTML\test\WebModuleUnit1.dfm=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\WebModuleUnit1.dfm</Transaction>
+    <Transaction>2019.03.03 19:13:02.994,D:\Projeler\PascalDHTML\test\Project1.dproj=C:\Users\srkgn\OneDrive\Belgeler\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

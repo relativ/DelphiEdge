@@ -6,6 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Winapi.ActiveX, System.Win.ComObj, MSHTML, TypInfo,
   JSEventObject;
+
+
 type
 
   THTMLElement = class;
@@ -28,8 +30,10 @@ type
     function GetImages: THTMLElementCollection;
     function GetScripts: THTMLElementCollection;
     function GetAll: THTMLElementCollection;
+    function GetDocument: IDispatch;
+    procedure SetDocument(const Value: IDispatch);
   public
-    property Document: IDispatch read FDocument write FDocument;
+    property Document: IDispatch read GetDocument write SetDocument;
     property ActiveElement: THTMLElement read GetActiveElement;
     property Anchors: THTMLElementCollection read GetAnchors;
     property Body: THTMLElement read GetBody;
@@ -164,6 +168,8 @@ type
 
   end;
 
+var
+  csCriticalSection: TRTLCriticalSection;
 
 
 
@@ -246,8 +252,15 @@ begin
 end;
 
 function TDocument.GetElementById(v: string): THTMLElement;
+var
+  el: IHTMLElement;
+  doc: IHTMLDocument3;
 begin
-  Result := CreateHtmlElement((Self.Document as IHTMLDocument3).getElementById(v));
+  EnterCriticalSection(csCriticalSection);
+  doc := Self.Document as IHTMLDocument3;
+  el := doc.getElementById(v);
+  Result := CreateHtmlElement(el);
+  LeaveCriticalSection(csCriticalSection);
 end;
 
 function TDocument.GetElementsByClassName(
@@ -258,6 +271,7 @@ var
   IElement: IHTMLElement;
   I: Integer;
 begin
+  EnterCriticalSection(csCriticalSection);
 
   Collection:= THTMLElementCollection.Create;
   IElements := (Document as IHTMLDocument7).getElementsByClassName(classname);
@@ -267,6 +281,7 @@ begin
     Collection.Add(CreateHtmlElement(IElement));
   end;
   Result := Collection;
+  LeaveCriticalSection(csCriticalSection);
 
 end;
 
@@ -277,7 +292,7 @@ var
   IElement: IHTMLElement;
   I: Integer;
 begin
-
+  EnterCriticalSection(csCriticalSection);
   Collection:= THTMLElementCollection.Create;
   IElements := (Document as IHTMLDocument3).getElementsByName(name);
   for I := 0 to IElements.length -1 do
@@ -286,6 +301,7 @@ begin
     Collection.Add(CreateHtmlElement(IElement));
   end;
   Result := Collection;
+  LeaveCriticalSection(csCriticalSection);
 end;
 
 function TDocument.GetElementsByTagName(
@@ -296,7 +312,7 @@ var
   IElement: IHTMLElement;
   I: Integer;
 begin
-
+  EnterCriticalSection(csCriticalSection);
   Collection:= THTMLElementCollection.Create;
   IElements := (Document as IHTMLDocument3).getElementsByTagName(tagName);
   for I := 0 to IElements.length -1 do
@@ -305,6 +321,7 @@ begin
     Collection.Add(CreateHtmlElement(IElement));
   end;
   Result := Collection;
+  LeaveCriticalSection(csCriticalSection);
 
 end;
 
@@ -403,6 +420,12 @@ begin
   Result := (Document as IHTMLDocument2).cookie;
 end;
 
+function TDocument.GetDocument: IDispatch;
+begin
+  FDocument := MainForm.Browser.Document;
+  Result := MainForm.Browser.Document;
+end;
+
 function TDocument.GetDomain: string;
 begin
   Result :=(Document as IHTMLDocument2).domain;
@@ -411,6 +434,11 @@ end;
 procedure TDocument.SetCookie(val: string);
 begin
   (Document as IHTMLDocument2).cookie := val;
+end;
+
+procedure TDocument.SetDocument(const Value: IDispatch);
+begin
+  FDocument := MainForm.Browser.Document;
 end;
 
 procedure TDocument.Write(val: string);
@@ -756,6 +784,11 @@ function THTMLScreen.GetWidth: integer;
 begin
   Result := (Element as IHTMLScreen).width;
 end;
+
+initialization
+  InitializeCriticalSection(csCriticalSection);
+finalization
+  DeleteCriticalSection(csCriticalSection);
 
 
 end.

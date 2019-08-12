@@ -1,0 +1,135 @@
+unit Lib;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Dialogs, JavascriptObject,
+  Soap.InvokeRegistry, Soap.SOAPHTTPClient, System.Types, Soap.XSBuiltIns,
+  TypInfo, System.RTTI, Soap.Rio;
+
+
+type
+
+  PISoapInvokable = ^ISoapInvokable;
+
+  ISoapInvokable = interface(IInvokable)
+  ['{6DB4E1E8-E1D0-4B87-B148-013B8F221D78}']
+
+  end;
+
+  Hello_PortType = interface(ISoapInvokable)
+  ['{A4815F94-3FC3-45A8-ACD7-3218DF4E1A54}']
+		function  Add(const intA: Integer; const intB: Integer): Integer;
+    function  Subtract(const intA: Integer; const intB: Integer): Integer;
+    function  Multiply(const intA: Integer; const intB: Integer): Integer;
+    function  Divide(const intA: Integer; const intB: Integer): Integer;
+	  end;
+
+  TSaopVars = array of Variant;
+
+  TLib = class
+    class function VarToStr(val: Variant): string;
+    class procedure ShowMessage(Value: string);
+    class function JSDecode(Value: Variant): TJSObject;
+    class function Soap(Addr: string): ISoapInvokable;
+    class function SoapCall(Service: TObject; MethodName: string; Args: array of Variant): Variant;
+  end;
+
+implementation
+
+uses  Main, uPSRuntime, uPSCompiler;
+
+class procedure TLib.ShowMessage(Value: string);
+begin
+  Vcl.Dialogs.ShowMessage(Value);
+end;
+
+class function TLib.JSDecode(Value: Variant): TJSObject;
+var
+  JS: TJSObject;
+begin
+  JS:= TJSObject.Create();
+  JS.ActualJSPoint := Value;
+  Result := JS;
+end;
+
+class function TLib.Soap(Addr: string): ISoapInvokable;
+const
+  defSvc  = 'Calculator';
+  defPrt  = 'CalculatorSoap12';
+var
+  RIO: THTTPRIO;
+begin
+
+  InvRegistry.RegisterInterface(TypeInfo(ISoapInvokable), 'http://tempuri.org/', 'utf-8');
+  InvRegistry.RegisterDefaultSOAPAction(TypeInfo(ISoapInvokable), 'http://tempuri.org/%operationName%');
+  InvRegistry.RegisterInvokeOptions(TypeInfo(ISoapInvokable), ioDocument);
+  InvRegistry.RegisterInvokeOptions(TypeInfo(ISoapInvokable), ioSOAP12);
+  { CalculatorSoap.Add }
+  InvRegistry.RegisterMethodInfo(TypeInfo(ISoapInvokable), 'Add', '',
+                                 '[ReturnName="AddResult"]');
+  { CalculatorSoap.Subtract }
+  InvRegistry.RegisterMethodInfo(TypeInfo(ISoapInvokable), 'Subtract', '',
+                                 '[ReturnName="SubtractResult"]');
+  { CalculatorSoap.Multiply }
+  InvRegistry.RegisterMethodInfo(TypeInfo(ISoapInvokable), 'Multiply', '',
+                                 '[ReturnName="MultiplyResult"]');
+  { CalculatorSoap.Divide }
+  InvRegistry.RegisterMethodInfo(TypeInfo(ISoapInvokable), 'Divide', '',
+                                 '[ReturnName="DivideResult"]');
+
+  Result := nil;
+  if Addr = '' then
+    exit();
+
+  RIO := THTTPRIO.Create(nil);
+  try
+    Result := RIO as ISoapInvokable;
+    RIO.WSDLLocation := Addr;
+    RIO.Service := defSvc;
+    RIO.Port := defPrt;
+  finally
+    if (Result = nil) then
+      RIO.Free;
+  end;
+end;
+
+class function TLib.SoapCall(Service: TObject; MethodName: string; Args: array of Variant): Variant;
+var
+ R : TRttiContext;
+ T : TRttiType;
+ M : TRttiMethod;
+ ResultVal: TValue;
+ VArr: array of TValue;
+  I: Integer;
+begin
+  Result := EmptyStr;
+  T := R.FindType('ISoapInvokable');
+  for M in t.GetMethods do
+    if (m.Name = MethodName)then
+    begin
+      for I := Low(Args) to High(Args) do
+      begin
+        Varr[I] := TValue.FromVariant(Args[I]);
+      end;
+      ResultVal := M.Invoke(Service, Varr);
+      Result := ResultVal.AsVariant;
+      break;
+    end;
+
+end;
+
+
+class function TLib.VarToStr(val: Variant): string;
+begin
+  Result := VarToStr(val);
+end;
+
+initialization
+
+
+
+
+
+end.

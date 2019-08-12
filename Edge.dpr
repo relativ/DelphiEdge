@@ -15,13 +15,19 @@ uses
   uPSI_JavascriptObject in 'lib\JavaScript\uPSI_JavascriptObject.pas',
   Lib in 'lib\Lib.pas',
   Utils in 'lib\Utils.pas',
-  uPSI_TypeDefines in 'lib\Classes\uPSI_TypeDefines.pas';
+  uPSI_TypeDefines in 'lib\Classes\uPSI_TypeDefines.pas',
+  ExternalObject in 'content\ExternalObject.pas',
+  djson in 'lib\Classes\djson.pas',
+  uPSI_djson in 'lib\Classes\uPSI_djson.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Luna');
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="PascalScript_Core_Reg.pas"/>
+    <File Path="uPSCompiler.pas"/>
+    <File Path="uPSComponent.pas"/>
+    <File Path="uPSComponent_COM.pas"/>
+    <File Path="uPSComponent_Controls.pas"/>
+    <File Path="uPSComponent_DB.pas"/>
+    <File Path="uPSComponent_Default.pas"/>
+    <File Path="uPSComponent_Forms.pas"/>
+    <File Path="uPSComponent_StdCtrls.pas"/>
+    <File Path="uPSC_buttons.pas"/>
+    <File Path="uPSC_classes.pas"/>
+    <File Path="uPSC_comobj.pas"/>
+    <File Path="uPSC_controls.pas"/>
+    <File Path="uPSC_dateutils.pas"/>
+    <File Path="uPSC_DB.pas"/>
+    <File Path="uPSC_dll.pas"/>
+    <File Path="uPSC_extctrls.pas"/>
+    <File Path="uPSC_forms.pas"/>
+    <File Path="uPSC_graphics.pas"/>
+    <File Path="uPSC_menus.pas"/>
+    <File Path="uPSC_std.pas"/>
+    <File Path="uPSC_stdctrls.pas"/>
+    <File Path="uPSDebugger.pas"/>
+    <File Path="uPSDisassembly.pas"/>
+    <File Path="uPSPreProcessor.pas"/>
+    <File Path="uPSRuntime.pas"/>
+    <File Path="uPSR_buttons.pas"/>
+    <File Path="uPSR_classes.pas"/>
+    <File Path="uPSR_comobj.pas"/>
+    <File Path="uPSR_controls.pas"/>
+    <File Path="uPSR_dateutils.pas"/>
+    <File Path="uPSR_DB.pas"/>
+    <File Path="uPSR_dll.pas"/>
+    <File Path="uPSR_extctrls.pas"/>
+    <File Path="uPSR_forms.pas"/>
+    <File Path="uPSR_graphics.pas"/>
+    <File Path="uPSR_menus.pas"/>
+    <File Path="uPSR_std.pas"/>
+    <File Path="uPSR_stdctrls.pas"/>
+    <File Path="uPSUtils.pas"/>
+    <File Path="dbrtl.dcp"/>
+    <File Path="rtl.dcp"/>
+    <File Path="vcl.dcp"/>
+  </ProjectSortOrder>
+</BorlandProject>

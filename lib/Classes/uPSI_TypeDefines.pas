@@ -35,7 +35,6 @@ procedure SIRegister_TypeDefines(CL: TPSPascalCompiler);
 { run-time registration functions }
 procedure RIRegister_TypeDefines_Routines(S: TPSExec);
 
-procedure SIRegister_ISoapInvokable(CL: TPSPascalCompiler);
 
 procedure Register;
 
@@ -56,22 +55,13 @@ end;
 (* === compile-time registration functions === *)
 (*----------------------------------------------------------------------------*)
 
-procedure SIRegister_ISoapInvokable(CL: TPSPascalCompiler);
-begin
-  //with RegInterfaceS(CL,'IInterface', 'ISoapInvokable') do
-  with CL.AddInterface(CL.FindInterface('IInvokable'),ISoapInvokable, 'ISoapInvokable') do
-  begin
-  end;
-end;
-
-
 procedure SIRegister_TypeDefines(CL: TPSPascalCompiler);
 begin
   CL.AddTypeS('TTypeKind', '( tkUnknown, tkInteger, tkChar, tkEnumeration, tkFl'
    +'oat, tkString, tkSet, tkClass, tkMethod, tkWChar, tkLString, tkWString, tk'
    +'Variant, tkArray, tkRecord, tkInterface, tkInt64, tkDynArray, tkUString, t'
    +'kClassRef, tkPointer, tkProcedure )');
-  CL.AddTypeS('TTypeInfo', 'record Kind : TTypeKind; Name : string; end');
+
  CL.AddDelphiFunction('Function PropType( Instance : TObject; const PropName : string) : TTypeKind');
  CL.AddDelphiFunction('Function PropIsType( Instance : TObject; const PropName : string; TypeKind : TTypeKind) : Boolean');
  CL.AddDelphiFunction('Function IsPublishedProp( Instance : TObject; const PropName : string) : Boolean');
@@ -146,7 +136,6 @@ end;
 (*----------------------------------------------------------------------------*)
 procedure TPSImport_TypeDefines.CompileImport1(CompExec: TPSScript);
 begin
-  SIRegister_ISoapInvokable(CompExec.Comp);
   SIRegister_TypeDefines(CompExec.Comp);
 end;
 (*----------------------------------------------------------------------------*)

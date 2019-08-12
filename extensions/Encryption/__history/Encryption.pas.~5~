@@ -1,0 +1,26 @@
+unit Encryption;
+
+interface
+
+uses SysUtils ,Classes, IdGlobal, IdCoderMIME, IdHash, IdHashMessageDigest;
+
+type
+
+  THash = class(TObject)
+  private
+
+  public
+    class function EncodeMd5(const value: string): string;
+    class function EncodeBase64(const value: string): string;
+    class function DecodeBase64(const value: string): string;
+  end;
+
+
+
+
+
+implementation
+
+
+
+end.

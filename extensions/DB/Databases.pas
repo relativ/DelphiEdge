@@ -30,14 +30,14 @@ type
   TDBConnection = class(TObject)
     private
       SQLConnection: TFDConnection;
-      function GetProviderName: AnsiString;
-      procedure SetProviderName(val: AnsiString);
+      function GetProviderName: string;
+      procedure SetProviderName(const Value: string);
       function GetDatabase: string;
       function GetPassword: string;
       function GetServer: string;
       function GetUserName: string;
       procedure SetDatabase(const Value: string);
-      procedure SetDriverName(val: string);
+      procedure SetDriverName(const Value: string);
       procedure SetPassword(const Value: string);
       procedure SetServer(const Value: string);
       procedure SetUserName(const Value: string);
@@ -48,10 +48,10 @@ type
       function GetParams: TStringList;
     public
       constructor Create;
-      destructor Free;
+      destructor Destroy; override;
       procedure Open();
       procedure Close();
-      property ProviderName: AnsiString read GetProviderName write SetProviderName;
+      property ProviderName: string read GetProviderName write SetProviderName;
       property UserName: string read GetUserName write SetUserName;
       property Password: string read GetPassword write SetPassword;
       property Server: string read GetServer write SetServer;
@@ -218,7 +218,7 @@ type
       procedure SetConnection(const Value: TDBConnection);
     public
       constructor Create;
-      destructor Free;
+      destructor Destroy; override;
       procedure Open;
       procedure Close;
       procedure Next;
@@ -235,6 +235,7 @@ type
       function FieldByNameAsFloat(FieldName: string): Double;
       function FieldByNameAsInteger(FieldName: string): Longint;
       function FieldByNameAsString(FieldName: string): String;
+      function FieldByName(const FieldName: string): TFieldNode;
       property Active: boolean read GetActive write SetActive;
 
       property Connection: TDBConnection read GetConnection write SetConnection;
@@ -261,9 +262,10 @@ begin
   SQLConnection.LoginPrompt := false;
 end;
 
-destructor TDBConnection.Free;
+destructor TDBConnection.Destroy;
 begin
   SQLConnection.Free;
+  inherited;
 end;
 
 function TDBConnection.GetConnected: boolean;
@@ -292,7 +294,7 @@ begin
   TryStrToInt(SQLConnection.Params.Values['Port'], Result);
 end;
 
-function TDBConnection.GetProviderName: AnsiString;
+function TDBConnection.GetProviderName: string;
 begin
   Result := SQLConnection.Params.DriverID;
 end;
@@ -323,9 +325,9 @@ begin
   SQLConnection.Params.Database := Value;
 end;
 
-procedure TDBConnection.SetDriverName(val: string);
+procedure TDBConnection.SetDriverName(const Value: string);
 begin
-  SQLConnection.Params.DriverID := val;
+  SQLConnection.Params.DriverID := Value;
 end;
 
 procedure TDBConnection.SetPassword(const Value: string);
@@ -338,10 +340,10 @@ begin
   SQLConnection.Params.Values['Port'] := IntToStr(Value);
 end;
 
-procedure TDBConnection.SetProviderName(val: AnsiString);
+procedure TDBConnection.SetProviderName(const Value: string);
 begin
-  SQLConnection.DriverName := val;
-  SQLConnection.Params.DriverID := val;
+  SQLConnection.DriverName := Value;
+  SQLConnection.Params.DriverID := Value;
 end;
 
 procedure TDBConnection.SetServer(const Value: string);
@@ -387,6 +389,11 @@ begin
   UniQuery.ExecSQL;
 end;
 
+function TDBQuery.FieldByName(const FieldName: string): TFieldNode;
+begin
+  Result := Fields.FieldByName(FieldName);
+end;
+
 function TDBQuery.FieldByNameAsBoolean(FieldName: string): Boolean;
 begin
   Result := UniQuery.FieldByName(FieldName).AsBoolean;
@@ -417,10 +424,11 @@ begin
   UniQuery.First;
 end;
 
-destructor TDBQuery.Free;
+destructor TDBQuery.Destroy;
 begin
   FFieldList.Free;
   UniQuery.Free;
+  inherited;
 end;
 
 function TDBQuery.GetActive: boolean;
