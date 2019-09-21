@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Dialogs, JavascriptObject,
   Soap.InvokeRegistry, Soap.SOAPHTTPClient, System.Types, Soap.XSBuiltIns,
-  TypInfo, System.RTTI, Soap.Rio;
+  TypInfo, System.RTTI, Soap.Rio, DOM, MSHTML;
 
 
 type
@@ -19,6 +19,7 @@ type
     class function EncodeMd5(const value: string): string;
     class function EncodeBase64(const value: string): string;
     class function DecodeBase64(const value: string): string;
+    class function DomDecode(Value: Variant): THTMLElement;
   end;
 
 implementation
@@ -66,6 +67,20 @@ end;
 class function TLib.VarToStr(val: Variant): string;
 begin
   Result := VarToStr(val);
+end;
+
+class function TLib.DomDecode(Value: Variant): THTMLElement;
+var
+  el: IHTMLElement;
+  actualEl: THTMLElement;
+begin
+  Result := nil;
+  if Supports(IDispatch(Value), IHTMLElement, el) then
+  begin
+    actualEl:= THTMLElement.Create;
+    actualEl.Element := el;
+    Result := actualEl;
+  end;
 end;
 
 

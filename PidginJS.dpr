@@ -1,0 +1,33 @@
+program PidginJS;
+
+uses
+  Vcl.Forms,
+  Main in 'Main.pas' {MainForm},
+  DOM in 'lib\DOM\DOM.pas',
+  uPSI_DOM in 'lib\DOM\uPSI_DOM.pas',
+  PluginBase in 'content\PluginBase.pas',
+  DialogList in 'lib\Classes\DialogList.pas',
+  Lists in 'lib\Classes\Lists.pas',
+  uPSI_DialogList in 'lib\Classes\uPSI_DialogList.pas',
+  uPSI_Lists in 'lib\Classes\uPSI_Lists.pas',
+  JavascriptObject in 'lib\JavaScript\JavascriptObject.pas',
+  JSEventObject in 'lib\JavaScript\JSEventObject.pas',
+  uPSI_JavascriptObject in 'lib\JavaScript\uPSI_JavascriptObject.pas',
+  Lib in 'lib\Lib.pas',
+  Utils in 'lib\Utils.pas',
+  uPSI_TypeDefines in 'lib\Classes\uPSI_TypeDefines.pas',
+  ExternalObject in 'content\ExternalObject.pas',
+  djson in 'lib\Classes\djson.pas',
+  uPSI_djson in 'lib\Classes\uPSI_djson.pas',
+  Vcl.Themes,
+  Vcl.Styles;
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Luna');
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+end.

@@ -1078,7 +1078,8 @@ type
     function ReadConstant(FParser: TPSPascalParser; StopOn: TPSPasToken): PIfRVariant;
 
     function ApplyAttribsToFunction(func: TPSProcedure): boolean;
-    function ProcessFunction(AlwaysForward: Boolean; Att: TPSAttributes): Boolean;
+    function ProcessFunction(AlwaysForward: Boolean; Att: TPSAttributes; out FunctionName: tbtString): Boolean; overload;
+    function ProcessFunction(AlwaysForward: Boolean; Att: TPSAttributes): Boolean; overload;
     function ValidateParameters(BlockInfo: TPSBlockInfo; Params: TPSParameters; ParamTypes: TPSParametersDecl): boolean;
 
     function IsVarInCompatible(ft1, ft2: TPSType): Boolean;
@@ -1102,6 +1103,7 @@ type
     function IsCompatibleType(p1, p2: TPSType; Cast: Boolean): Boolean;
 
     function IsDuplicate(const s: tbtString; const check: TPSDuplicCheck): Boolean;
+    function IsDuplicateMethod(const funcName, className: tbtString): Boolean;
     {$IFDEF PS_USESSUPPORT}
     function IsInLocalUnitList(s: tbtString): Boolean;
 	{$ENDIF}
@@ -3656,6 +3658,34 @@ begin
   end;
 end;
 
+function TPSPascalCompiler.IsDuplicateMethod(const funcName, className: tbtString): Boolean;
+var
+  h,a, l, classNameHash: Longint;
+  x: TPSInternalProcedure;
+  cls: TPSClassType;
+begin
+  Result := false;
+  classNameHash := MakeHash(className);
+  h := MakeHash(funcName);
+  for l := FTypes.Count - 1 downto 0 do
+    begin
+      if (TPSType(FTypes.Data[l]).NameHash = classNameHash) and
+        (TPSType(FTypes.Data[l]).Name = className) then
+      begin
+        cls := TPSClassType(FTypes.Data[l]);
+        for a := cls.Procs.Count -1 downto 0 do
+        begin
+          x := TPSInternalProcedure(cls.Procs.Data[a]);
+          if (h = TPSInternalProcedure(x).NameHash) and (funcName = TPSInternalProcedure(x).Name) then
+          begin
+            Result := True;
+            exit;
+          end;
+        end;
+      end;
+    end;
+end;
+
 function TPSPascalCompiler.IsDuplicate(const s: tbtString; const check: TPSDuplicCheck): Boolean;
 var
   h, l: Longint;
@@ -3679,27 +3709,30 @@ begin
   end;
 
   if dcProcs in Check then
-  for l := FProcs.Count - 1 downto 0 do
   begin
-    x := FProcs.Data[l];
-    if x.ClassType = TPSInternalProcedure then
+    for l := FProcs.Count - 1 downto 0 do
     begin
-      if (h = TPSInternalProcedure(x).NameHash) and (s = TPSInternalProcedure(x).Name) then
+      x := FProcs.Data[l];
+      if x.ClassType = TPSInternalProcedure then
       begin
-        Result := True;
-        exit;
-      end;
-    end
-    else
-    begin
-      if (TPSExternalProcedure(x).RegProc.NameHash = h) and
-        (TPSExternalProcedure(x).RegProc.Name = s) then
+        if (h = TPSInternalProcedure(x).NameHash) and (s = TPSInternalProcedure(x).Name) then
+        begin
+          Result := True;
+          exit;
+        end;
+      end
+      else
       begin
-        Result := True;
-        exit;
+        if (TPSExternalProcedure(x).RegProc.NameHash = h) and
+          (TPSExternalProcedure(x).RegProc.Name = s) then
+        begin
+          Result := True;
+          exit;
+        end;
       end;
     end;
   end;
+
   if dcVars in Check then
   for l := FVars.Count - 1 downto 0 do
   begin
@@ -3908,23 +3941,32 @@ function TPSPascalCompiler.ReadType(const Name: tbtString; FParser: TPSPascalPar
 var
   TypeNo: TPSType;
   h, l: Longint;
-  FieldName,fieldorgname,s, SGetter, SSetter: tbtString;
-  RecSubVals, ClassSubVals, ClassProperties: TPSList;
+  FieldName,fieldorgname,s, SGetter, SSetter, FuncName: tbtString;
+  RecSubVals, ClassProperties, ClassSubVals: TPSList;
+  FClassOpenRound: boolean;
   FArrayStart, FArrayLength: Longint;
   rvv: PIFPSRecordFieldTypeDef;
   crvv: PIFPSClassFieldTypeDef;
   prvv: PIFPSClassPropFieldTypeDef;
+
   p, PType, p2, ProcTypes: TPSType;
   tempf: PIfRVariant;
   A: integer;
   Proc: TPSProcedure;
+  PSIntProc: TPSInternalProcedure;
   CurrentTokenId: TPSPasToken;
+  PSCompileTimeClass : TPSCompileTimeClass;
+  ClassAncestor: tbtstring;
 {$IFNDEF PS_NOINTERFACES}
   InheritedFrom: tbtString;
   Guid: TGUID;
   Intf: TPSInterface;
-  I: TObject;
+
 {$ENDIF}
+  I: TObject;
+  D: Integer;
+  K: Integer;
+  F: Integer;
 begin
   if (FParser.CurrTokenID = CSTII_Function) or (FParser.CurrTokenID = CSTII_Procedure) then
   begin
@@ -4266,27 +4308,18 @@ begin
     Exit;
   end else if FParser.CurrTokenId = CSTII_class then
   begin
-    FParser.Next;
-    ClassSubVals := TPSList.Create;
+
     ClassProperties := TPSList.Create;
+    ClassSubVals := TPSList.Create;
     PType := TPSClassType.Create;
-    FParser.Next;
-    if FParser.CurrTokenId <> CSTI_Identifier then
-    begin
-      ClearClassSubVals(ClassSubVals);
-      if FParser = Self.FParser then
-      MakeError('', ecIdentifierExpected, '');
-      Result := nil;
-      exit;
-    end;
-    FieldName := FParser.GetToken;
-    s := S+FParser.OriginalToken+'|';
-    FParser.Next;
+    FieldName := Name;// FParser.GetToken;
+    s := S+FieldName+'|';
+
     h := MakeHash(FieldName);
-    for l := 0 to ClassSubVals.Count - 1 do
+    for l := 0 to FTypes.Count - 1 do
     begin
-      if (PIFPSClassFieldTypeDef(ClassSubVals[l]).FieldNameHash = h) and
-        (PIFPSClassFieldTypeDef(ClassSubVals[l]).FieldName = FieldName) then
+      if (TPSClassType(FTypes[l]).NameHash = h) and
+        (TPSClassType(FTypes[l]).OriginalName = FieldName) then
       begin
         if FParser = Self.FParser then
           MakeError('', ecDuplicateIdentifier, FParser.OriginalToken);
@@ -4296,49 +4329,57 @@ begin
         exit;
       end;
     end;
-    for A := 0 to FTypes.Count -1 do
+
+    FParser.Next;
+    ClassAncestor := 'TOBJECT';
+    if FParser.CurrTokenID = CSTI_OpenRound then
     begin
-      if (TPSClassType(FTypes[A]).Name = FastUpperCase(FieldName)) then
+      FParser.Next;
+      for A := 0 to FTypes.Count -1 do
       begin
-          TPSClassType(PType).AncessorType := TPSClassType(FTypes[A]);
-          break;
+        if (TPSClassType(FTypes[A]).Name = FastUpperCase(FParser.GetToken)) then
+        begin
+            ClassAncestor := TPSClassType(FTypes[A]).Name;
+            TPSClassType(PType).AncessorType := TPSClassType(FTypes[A]);
+            break;
+        end;
+      end;
+      FParser.Next;
+      FParser.Next;
+    end else begin
+      for A := 0 to FTypes.Count -1 do
+      begin
+        if (TPSClassType(FTypes[A]).Name = 'TOBJECT') then
+        begin
+            TPSClassType(PType).AncessorType := TPSClassType(FTypes[A]);
+            break;
+        end;
       end;
     end;
 
-
-    if FParser.CurrTokenID <> CSTI_CloseRound then
-    begin
-      if FParser = Self.FParser then
-        MakeError('', ecCloseRoundExpected, '');
-      ClearClassSubVals(ClassSubVals);
-      ClearClassProps(ClassProperties);
-      Result := nil;
-      exit;
-    end;
-    FParser.Next;
     repeat
       FParser.Next;
       case FParser.CurrTokenId of
         CSTII_public, CSTII_published,CSTII_private,CSTII_protected:
         begin
-          //FParser.Next;
+          FParser.Next;
         end;
         CSTII_procedure, CSTII_function:
         begin
-          CurrentTokenId := FParser.CurrTokenId;
-          FParser.Next;
-          if FParser.CurrTokenID <> CSTI_Identifier then
+
+          ProcessFunction(true, nil, FuncName);
+          
+
+
+          for A := 0 to FProcs.Count -1 do
           begin
-            if FParser = Self.FParser then
-              MakeError('', ecIdentifierExpected, '');
-            ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
-            Result := nil;
-            exit;
+            if TPSInternalProcedure(FProcs[A]).Name = FuncName then
+            begin
+              TPSClassType(PType).Procs.Add(TPSInternalProcedure(FProcs[A]));
+              break;
+            end;
           end;
-          FieldName := FParser.GetToken;
-          ProcTypes := ReadTypeAddProcedure(FieldName, FParser, CurrentTokenId);
-          TPSClassType(PType).Procs.Add(ProcTypes);
+
 
         end;
         CSTII_property:
@@ -4351,7 +4392,7 @@ begin
             if FParser = Self.FParser then
               MakeError('', ecColonExpected, '');
             ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
+            ClearClassProps(TPSClassType(PType).FClassProperties);
             Result := nil;
             exit;
           end;
@@ -4361,7 +4402,7 @@ begin
           if p = nil then
           begin
             ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
+            ClearClassProps(TPSClassType(PType).FClassProperties);
             MakeError('', ecUnknownType, '');
             Result := nil;
             exit;
@@ -4412,7 +4453,7 @@ begin
             if FParser = Self.FParser then
               MakeError('', ecColonExpected, '');
             ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
+            ClearClassProps(TPSClassType(PType).FClassProperties);
             Result := nil;
             exit;
           end;
@@ -4421,7 +4462,7 @@ begin
           if p = nil then
           begin
             ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
+            ClearClassProps(TPSClassType(PType).FClassProperties);
             Result := nil;
             exit;
           end;
@@ -4429,7 +4470,7 @@ begin
           if FParser.CurrTokenId <> CSTI_Semicolon then
           begin
             ClearClassSubVals(ClassSubVals);
-            ClearClassProps(ClassProperties);
+            ClearClassProps(TPSClassType(PType).FClassProperties);
             if FParser = Self.FParser then
             MakeError('', ecSemicolonExpected, '');
             Result := nil;
@@ -4449,13 +4490,40 @@ begin
 
     PType.Name := FastUppercase(Name);
     PType.OriginalName := Name;
-    PType.BaseType := btRecord;
+    PType.BaseType := btClass;
     {$IFDEF PS_USESSUPPORT}
     PType.DeclareUnit:=fModule;
     {$ENDIF}
     PType.DeclarePos := FParser.CurrTokenPos;
     PType.DeclareRow := FParser.Row;
     PType.DeclareCol := FParser.Col;
+
+    PSCompileTimeClass := Self.AddClassN(Self.FindClass(ClassAncestor),PType.Name);
+    PSCompileTimeClass.RegisterMethod('Constructor Create');
+    for l := 0 to TPSClassType(PType).Procs.Count -1 do
+    begin
+      PSIntProc := TPSInternalProcedure(TPSClassType(PType).Procs[l]);
+      if PSIntProc.Decl.Result <> nil then
+        s := 'function '
+      else
+        s := 'procedure ';
+      s := s + PSIntProc.Name + '(';
+      for K := 0 to PSIntProc.Decl.GetParamCount -1 do
+        s := s + PSIntProc.Decl.Params[K].Name +': '
+                  + PSIntProc.Decl.Params[K].aType.Name + ';';
+
+      if (Length(s) > 0 ) and (s[Length(s)] = ';') then
+        Delete(s, length(s), 1);
+      s := s + ')';
+      if PSIntProc.Decl.Result <> nil then
+        s := s + ': '+ PSIntProc.Decl.Result.Name +';'
+      else
+        s := '; ';
+      PSCompileTimeClass.RegisterMethod(s);
+    end;
+
+
+
     for l := 0 to ClassSubVals.Count -1 do
     begin
       crvv := ClassSubVals[l];
@@ -4475,13 +4543,18 @@ begin
         FieldOrgName := prvv.FieldOrgName;
         FType := prvv.FType;
       end;
+      PSCompileTimeClass.RegisterProperty(prvv.FieldOrgName, prvv.FType.Name, iptr);
       prvv.Free;
     end;
 
     ClassSubVals.Free;
     ClassProperties.Free;
     FTypes.Add(PType);
-    Result := p;
+
+    FClasses.Add(PSCompileTimeClass);
+
+
+    Result := PType;
     Exit;
 
   end {$IFNDEF PS_NOINTERFACES} else if FParser.CurrTokenId = CSTII_Interface then
@@ -5091,11 +5164,17 @@ begin
 end;
 
 
-
 function TPSPascalCompiler.ProcessFunction(AlwaysForward: Boolean; Att: TPSAttributes): Boolean;
 var
+  FuncName: tbtString;
+begin
+  Result := ProcessFunction(AlwaysForward, Att, FuncName);
+end;
+
+function TPSPascalCompiler.ProcessFunction(AlwaysForward: Boolean; Att: TPSAttributes; out FunctionName: tbtString): Boolean;
+var
   FunctionType: TFuncType;
-  OriginalName, FunctionName: tbtString;
+  OriginalName, MethodClassName: tbtString;
   FunctionParamNames: tbtString;
   FunctionTempType: TPSType;
   ParamNo: Cardinal;
@@ -5148,6 +5227,21 @@ begin
   ECol := FParser.Col;
   OriginalName := FParser.OriginalToken;
   FunctionName := FParser.GetToken;
+  if IsDuplicate(FunctionName, [dcTypes]) then
+  begin
+    FParser.Next;
+    FParser.Next;
+    MethodClassName := FunctionName;
+    OriginalName := FParser.OriginalToken;
+    FunctionName := FParser.GetToken;
+   { if IsDuplicateMethod(FunctionName, MethodClassName) then
+    begin
+      att.free;
+      MakeError('', ecDuplicateIdentifier, FunctionName);
+      exit;
+    end;  }
+  end;
+
   FuncNo := -1;
   for i := 0 to FProcs.Count -1 do
   begin
@@ -11506,7 +11600,7 @@ end;
 
 
 type
-  TCompilerState = (csStart, csProgram, csUnit, csUses, csInterface, csInterfaceUses, csImplementation);
+  TCompilerState = (csStart, csProgram, csUnit, csUses, csInterface, csInterfaceUses, csClass, csImplementation);
 
 function TPSPascalCompiler.Compile(const s: tbtString): Boolean;
 var

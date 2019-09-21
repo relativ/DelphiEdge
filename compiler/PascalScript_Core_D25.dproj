@@ -109,8 +109,8 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_DcpOutput>D:\Projeler\PascalDHTML\Win32\Debug\</DCC_DcpOutput>
-        <DCC_BplOutput>D:\Projeler\PascalDHTML\Win32\Debug\</DCC_BplOutput>
+        <DCC_DcpOutput>D:\Projeler\PidginJS\Win32\Debug\</DCC_DcpOutput>
+        <DCC_BplOutput>D:\Projeler\PidginJS\Win32\Debug\</DCC_BplOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -118,8 +118,8 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_DcpOutput>D:\Projeler\PascalDHTML\Win32\Debug\</DCC_DcpOutput>
-        <DCC_BplOutput>D:\Projeler\PascalDHTML\Win32\Debug\</DCC_BplOutput>
+        <DCC_DcpOutput>D:\Projeler\PidginJS\Win32\Debug\</DCC_DcpOutput>
+        <DCC_BplOutput>D:\Projeler\PidginJS\Win32\Debug\</DCC_BplOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
@@ -222,8 +222,11 @@
                     <VersionInfoKeys Name="CompileDate">Friday, March 21, 2008 1:24 PM</VersionInfoKeys>
                 </VersionInfoKeys>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k230.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp230.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\Projeler\PascalDHTML\Win32\Debug\PascalScript_Core_D26.bpl">File D:\Projeler\PascalDHTML\Win32\Debug\PascalScript_Core_D26.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k250.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp250.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>

@@ -818,6 +818,7 @@ var
 begin
   Sender.AddMethod(Self, @TLib.ShowMessage, 'procedure ShowMessage(const s: string);');
   Sender.AddMethod(Self, @TLib.JSDecode, 'function JSDecode(Value: Variant): TJSObject;');
+  Sender.AddMethod(Self, @TLib.DomDecode, 'function DomDecode(Value: Variant): THTMLElement;');
   Sender.AddMethod(Self, @TLib.VarToStr, 'function VarToStr(val: Variant): string;');
   Sender.AddMethod(Self, @TLib.EncodeMd5, 'function EncodeMd5(const value: string): string;');
   Sender.AddMethod(Self, @TLib.EncodeBase64, 'function EncodeBase64(const value: string): string;');

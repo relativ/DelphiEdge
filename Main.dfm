@@ -87,6 +87,7 @@ object MainForm: TMainForm
         Height = 265
         Align = alClient
         TabOrder = 1
+        Silent = False
         OnBeforeNavigate2 = BrowserBeforeNavigate2
         OnNewWindow2 = BrowserNewWindow2
         OnDocumentComplete = BrowserDocumentComplete

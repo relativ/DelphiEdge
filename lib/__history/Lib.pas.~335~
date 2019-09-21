@@ -1,0 +1,88 @@
+unit Lib;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Dialogs, JavascriptObject,
+  Soap.InvokeRegistry, Soap.SOAPHTTPClient, System.Types, Soap.XSBuiltIns,
+  TypInfo, System.RTTI, Soap.Rio, DOM;
+
+
+type
+
+  TLib = class
+    class function VarToStr(val: Variant): string;
+    class procedure ShowMessage(Value: string);
+    class function JSDecode(Value: Variant): TJSObject;
+
+    class function EncodeMd5(const value: string): string;
+    class function EncodeBase64(const value: string): string;
+    class function DecodeBase64(const value: string): string;
+    class function DomDecode(Value: Variant): THTMLElement;
+  end;
+
+implementation
+
+uses  Main, uPSRuntime, uPSCompiler, IdGlobal, IdCoderMIME, IdHash, IdHashMessageDigest;
+
+
+class function TLib.DecodeBase64(const value: string): string;
+begin
+  Result := TIdDecoderMIME.DecodeString(value, IndyTextEncoding_UTF8);
+end;
+
+class function TLib.EncodeBase64(const value: string): string;
+begin
+  Result := TIdEncoderMIME.EncodeBytes(ToBytes(value));
+end;
+
+class function TLib.EncodeMd5(const value: string): string;
+var
+    hashMessageDigest5 : TIdHashMessageDigest5;
+begin
+  hashMessageDigest5 := nil;
+  try
+      hashMessageDigest5 := TIdHashMessageDigest5.Create;
+      Result := IndyLowerCase ( hashMessageDigest5.HashStringAsHex ( value ) );
+  finally
+      hashMessageDigest5.Free;
+  end;
+end;
+
+class procedure TLib.ShowMessage(Value: string);
+begin
+  Vcl.Dialogs.ShowMessage(Value);
+end;
+
+class function TLib.JSDecode(Value: Variant): TJSObject;
+var
+  JS: TJSObject;
+begin
+  JS:= TJSObject.Create();
+  JS.ActualJSPoint := Value;
+  Result := JS;
+end;
+
+class function TLib.VarToStr(val: Variant): string;
+begin
+  Result := VarToStr(val);
+end;
+
+class function DomDecode(Value: Variant): THTMLElement;
+var
+  el: IHTMLElement;
+  actualEl: THTMLElement;
+begin
+  Result := nil;
+  if Supports(IDispatch(Value), IHTMLElement, el) then
+  begin
+    actualEl:= THTMLElement.Create;
+    actualEl.Element := el;
+    Result := actualEl;
+  end;
+end;
+
+
+
+end.
