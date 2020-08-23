@@ -40,6 +40,21 @@ holder
   showmessage(window.location.href);
   //window.location.href = 'http://www.haberturk.com';
   showmessage(inttostr(window.screen.width));
+	
+	type
+		TTest = class
+			private
+				FDD : string;
+			public
+				property Prop : string read FDD write FDD;
+		end;
+		
+		
+		var Abc: TTest;
+		Abc := TTest.Create();
+		Abc.Prop := 'merhaba object';
+		ShowMessage(Abc.Prob);
+		Abc.Free;
   
  
   procedure fetchdb;
@@ -93,11 +108,10 @@ end;
 var s: string;
 var j : TJSON;
 s := '{"merhaba": "degerin", "aloo": {"ne": "var"}}';
-j := TJSON.Create();
+j := TJSON.Create(nil);
 j:= j.parse(s);
 
 showmessage(j['merhaba'].AsString);
 showmessage(j['aloo']['ne'].AsString);
 
 </script>
-

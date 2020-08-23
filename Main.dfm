@@ -87,7 +87,6 @@ object MainForm: TMainForm
         Height = 265
         Align = alClient
         TabOrder = 1
-        Silent = False
         OnBeforeNavigate2 = BrowserBeforeNavigate2
         OnNewWindow2 = BrowserNewWindow2
         OnDocumentComplete = BrowserDocumentComplete
@@ -98,6 +97,7 @@ object MainForm: TMainForm
         PrintOptions.HTMLHeader.Strings = (
           '<HTML></HTML>')
         PrintOptions.Orientation = poPortrait
+        ExplicitTop = -6
         ControlData = {
           4C000000F13E0000631B00000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -109,48 +109,135 @@ object MainForm: TMainForm
     object TabSheetCode: TTabSheet
       Caption = 'Code'
       ImageIndex = 1
-      object MemoCode: TSynMemo
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object MemoCode: TBCEditor
         Left = 0
         Top = 0
         Width = 609
-        Height = 354
+        Height = 335
+        Cursor = crIBeam
+        ActiveLine.Indicator.Visible = False
         Align = alClient
+        Caret.Options = []
+        CodeFolding.Hint.Font.Charset = DEFAULT_CHARSET
+        CodeFolding.Hint.Font.Color = clWindowText
+        CodeFolding.Hint.Font.Height = -11
+        CodeFolding.Hint.Font.Name = 'Courier New'
+        CodeFolding.Hint.Font.Style = []
+        CodeFolding.Hint.Indicator.Glyph.Visible = False
+        CodeFolding.Visible = True
+        CompletionProposal.CloseChars = '()[]. '
+        CompletionProposal.Columns = <
+          item
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Courier New'
+            Font.Style = []
+            Items = <>
+            Title.Font.Charset = DEFAULT_CHARSET
+            Title.Font.Color = clWindowText
+            Title.Font.Height = -11
+            Title.Font.Name = 'Courier New'
+            Title.Font.Style = []
+          end>
+        CompletionProposal.SecondaryShortCut = 0
+        CompletionProposal.ShortCut = 16416
+        CompletionProposal.Trigger.Chars = '.'
+        CompletionProposal.Trigger.Enabled = False
+        Directories.Colors = 'Colors'
+        Directories.Highlighters = 'Highlighters'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -13
+        Font.Height = -12
         Font.Name = 'Courier New'
         Font.Style = []
+        LeftMargin.Font.Charset = DEFAULT_CHARSET
+        LeftMargin.Font.Color = 13408665
+        LeftMargin.Font.Height = -11
+        LeftMargin.Font.Name = 'Courier New'
+        LeftMargin.Font.Style = []
+        LeftMargin.Width = 55
+        Lines.Strings = (
+          '')
+        LineSpacing = 0
+        MatchingPair.Enabled = True
+        Minimap.Font.Charset = DEFAULT_CHARSET
+        Minimap.Font.Color = clWindowText
+        Minimap.Font.Height = -1
+        Minimap.Font.Name = 'Courier New'
+        Minimap.Font.Style = []
+        Minimap.Visible = True
+        SpecialChars.Style = scsDot
+        SyncEdit.ShortCut = 24650
         TabOrder = 0
-        CodeFolding.GutterShapeSize = 11
-        CodeFolding.CollapsedLineColor = clGrayText
-        CodeFolding.FolderBarLinesColor = clGrayText
-        CodeFolding.IndentGuidesColor = clGray
-        CodeFolding.IndentGuides = True
-        CodeFolding.ShowCollapsedLine = False
-        CodeFolding.ShowHintMark = True
-        UseCodeFolding = False
-        Gutter.Font.Charset = DEFAULT_CHARSET
-        Gutter.Font.Color = clWindowText
-        Gutter.Font.Height = -11
-        Gutter.Font.Name = 'Courier New'
-        Gutter.Font.Style = []
-        Highlighter = SynMultiSyn1
-        TabWidth = 4
-        WantTabs = True
-        FontSmoothing = fsmNone
+        TokenInfo.Font.Charset = DEFAULT_CHARSET
+        TokenInfo.Font.Color = clWindowText
+        TokenInfo.Font.Height = -11
+        TokenInfo.Font.Name = 'Courier New'
+        TokenInfo.Font.Style = []
+        TokenInfo.Title.Font.Charset = DEFAULT_CHARSET
+        TokenInfo.Title.Font.Color = clWindowText
+        TokenInfo.Title.Font.Height = -11
+        TokenInfo.Title.Font.Name = 'Courier New'
+        TokenInfo.Title.Font.Style = []
+        WordWrap.Indicator.Bitmap.Data = {
+          7E030000424D7E0300000000000036000000280000000F0000000E0000000100
+          2000000000004803000000000000000000000000000000000000FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF000000
+          000000000000000000000000000000000000FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0080000000FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF0000000000000000000000
+          0000FF00FF00FF00FF00FF00FF00FF00FF008000000080000000FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF008000000080000000800000008000000080000000FF00
+          FF00FF00FF00FF00FF00FF00FF00000000000000000000000000FF00FF00FF00
+          FF00FF00FF00FF00FF008000000080000000FF00FF00FF00FF0080000000FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF0080000000FF00FF00FF00FF0080000000FF00FF00FF00
+          FF00FF00FF000000000000000000000000000000000000000000FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF0080000000FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF0080000000FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00800000008000000080000000800000008000
+          00008000000080000000FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00}
+        WordWrap.Indicator.MaskColor = clFuchsia
+      end
+      object StatusBar1: TStatusBar
+        Left = 0
+        Top = 335
+        Width = 609
+        Height = 19
+        Panels = <
+          item
+            Width = 500
+          end>
       end
     end
   end
   object OpenDialog: TOpenDialog
-    Left = 80
-    Top = 144
+    Left = 72
+    Top = 152
   end
   object SynHTMLSyn1: TSynHTMLSyn
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
-    Left = 152
-    Top = 144
+    Left = 144
+    Top = 152
   end
   object SynPasSyn1: TSynPasSyn
     Options.AutoDetectEnabled = False
@@ -182,15 +269,15 @@ object MainForm: TMainForm
         Highlighter = SynCssSyn1
       end>
     DefaultHighlighter = SynHTMLSyn1
-    Left = 160
-    Top = 72
+    Left = 144
+    Top = 96
   end
   object SynJScriptSyn1: TSynJScriptSyn
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
     Left = 80
-    Top = 72
+    Top = 96
   end
   object IFPS3CE_Controls1: TPSImport_Controls
     EnableStreams = True
@@ -219,7 +306,7 @@ object MainForm: TMainForm
   end
   object ApplicationEvents: TApplicationEvents
     Left = 144
-    Top = 264
+    Top = 248
   end
   object ce: TPSScriptDebugger
     CompilerOptions = [icAllowNoBegin, icAllowUnit, icAllowNoEnd]
@@ -259,8 +346,8 @@ object MainForm: TMainForm
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
-    Left = 60
-    Top = 264
+    Left = 72
+    Top = 248
   end
   object PSImport_Classes1: TPSImport_Classes
     EnableStreams = True

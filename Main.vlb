@@ -77,11 +77,8 @@ Coordinates=75,132,86,33
 [MemoDebug]
 Coordinates=73,10,76,51
 
-[MemoCode]
-Coordinates=167,71,69,33
-
 []
-Coordinates=0,212,82,33
+Coordinates=167,71,69,33
 Visible=True
 
 [Browser]

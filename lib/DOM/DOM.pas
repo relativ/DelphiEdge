@@ -9,9 +9,53 @@ uses
 
 
 type
-
+	
   THTMLElement = class;
   THTMLElementCollection = class;
+  
+  
+  ITHTMLElement = interface
+    function GetId: string;
+    procedure SetId(Value: string);
+    function GetTagName: string;
+    function GetClassValues: string;
+    procedure SetClassValues(Value: string);
+    function GetParentElement: THTMLElement;
+    function GetOffsetLeft: integer;
+    function GetOffsetTop: integer;
+    function GetOffsetWidth: integer;
+    function GetOffsetHeight: integer;
+    function GetInnerHtml: string;
+    procedure SetInnerHtml(Value: string);
+    function GetInnerText: string;
+    procedure SetInnerText(Value: string);
+    function GetOuterHTML: string;
+    function GetOuterText: string;
+    function GetChildren: THTMLElementCollection;
+
+    property ParentElement: THTMLElement read GetParentElement;
+    property Id: string read GetId write SetId;
+    property ClassValues: string read GetClassValues write SetClassValues;
+    property TagName: string read GetTagName;
+    property OffsetLeft: integer read GetOffsetLeft;
+    property OffsetTop: integer read GetOffsetTop;
+    property OffsetWidth: integer read GetOffsetWidth;
+    property OffsetHeight: integer read GetOffsetHeight;
+    property InnerHtml: string read GetInnerHtml write SetInnerHtml;
+    property InnerText: string read GetInnerText write SetInnerText;
+    property OuterHTML: string read GetOuterHTML;
+    property OuterText: string read GetOuterText;
+    property Children: THTMLElementCollection read GetChildren;
+
+    procedure SetAttribute(Name, Value: string);
+    function GetAttribute(Name: string): string;
+    procedure RemoveAttribute(Name: string);
+    procedure SetActive();
+    procedure AppendElement(El: THTMLElement);
+    procedure Focus();
+    procedure AttachEvent(event: string; method: string);
+  end;
+  
 
   TDocument = class(TObject)
   private
@@ -65,7 +109,7 @@ type
     property Item[Index: Integer]: THTMLElement read Get write Put; default;
   end;
 
-  THTMLElement = class(TObject)
+  THTMLElement = class(TInterfacedObject,  ITHTMLElement)
   private
     FElement: IDispatch;
     function GetId: string;

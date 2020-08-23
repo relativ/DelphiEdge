@@ -16,7 +16,8 @@ uses
   JavascriptObject, Utils, DOM, Registry, Data.DB, Datasnap.DBClient,
   Soap.SOAPConn, Soap.InvokeRegistry, Soap.WSDLIntf, Soap.SOAPPasInv,
   Soap.SOAPHTTPPasInv, IdBaseComponent,
-  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, SHDocVw_EWB, EwbCore, EmbeddedWB;
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, SHDocVw_EWB, EwbCore, EmbeddedWB,
+  BCEditor.Editor.Base, BCEditor.Editor;
 
 const
   CEF_SHOWKEYBOARD     = WM_APP + $B01;
@@ -51,8 +52,9 @@ type
     TabSheetBrowser: TTabSheet;
     MemoDebug: TMemo;
     TabSheetCode: TTabSheet;
-    MemoCode: TSynMemo;
     Browser: TEmbeddedWB;
+    MemoCode: TBCEditor;
+    StatusBar1: TStatusBar;
     procedure TabSheetBrowserShow(Sender: TObject);
     procedure BtnOpenClick(Sender: TObject);
     procedure ceCompile(Sender: TPSScript);
@@ -90,6 +92,7 @@ type
     procedure LoadExternalDllPlugins(doc: IHTMLDocument3);
     procedure DownloadAndLoadPlugin(url: string);
     procedure CompileAndRun;
+    procedure MemoCode0CaretChanged(ASender: TObject; X, Y: Integer);
 
   protected
     __sPascalCodes: string;
@@ -321,9 +324,23 @@ begin
   Reg.CloseKey;
   Reg.Free;
 
+  MemoCode.Align := alClient;
+  MemoCode.Name := 'MemoCode';
+  MemoCode.Lines.Text := '';
+  MemoCode.OnCaretChanged := MemoCode0CaretChanged;
+  MemoCode.Minimap.Visible := true;
+  MemoCode.Highlighter.LoadFromFile('Default.json');
+  MemoCode.Highlighter.Colors.LoadFromFile('Default.json');
+  MemoCode.CodeFolding.Visible := true;
 
 
 
+
+end;
+
+procedure TMainForm.MemoCode0CaretChanged(ASender: TObject; X, Y: Integer);
+begin
+  StatusBar1.Panels[0].Text := 'Col: ' +IntToStr(X) + ' Row : ' + IntToStr(Y);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -780,10 +797,15 @@ begin
 end;
 
 procedure TMainForm.BtnOpenClick(Sender: TObject);
+var
+  sList: TStringList;
 begin
   if OpenDialog.Execute() then
   begin
-    MemoCode.Lines.LoadFromFile(OpenDialog.FileName);
+    sList:= TStringList.Create();
+    sList.LoadFromFile(OpenDialog.FileName);
+    MemoCode.Lines.LoadFromStrings(sList);
+    sList.Free;
   end;
 end;
 
