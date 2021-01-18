@@ -162,9 +162,10 @@ type
     function GetHost: string;
     function GetHash: string;
     function GetPort: integer;
+    procedure SetHref(Value: string);
   public
     property Element: IDispatch read FElement write FElement;
-    property Href: string read GetHref;
+    property Href: string read GetHref write SetHref;
     property Protocol: string read GetProtocol;
     property Host: string read GetHost;
     property Port: integer read GetPort;
@@ -530,11 +531,16 @@ var
   Proc: TProcedure;
   IMethod: IDispatch;
 begin
-  PSMethod := MainForm.ce.Exec.GetProcAsMethodN(method);
-  Proc := TProcedure(PSMethod);
-  IMethod := (TEventObject.Create(Proc) as IDispatch);
-  IElement := Element as IHTMLElement2;
-  IElement.attachEvent(event, IMethod);
+  CoInitialize(nil);
+  try
+    PSMethod := MainForm.ce.Exec.GetProcAsMethodN(method);
+    Proc := TProcedure(PSMethod);
+    IMethod := (TEventObject.Create(Proc) as IDispatch);
+    IElement := Element as IHTMLElement2;
+    IElement.attachEvent(event, IMethod);
+  finally
+    CoUninitialize;
+  end;
 end;
 
 procedure THTMLElement.Focus;
@@ -800,6 +806,11 @@ end;
 function THTMLLocation.GetHref: string;
 begin
   Result := (Element as IHTMLLocation).href;
+end;
+
+procedure THTMLLocation.SetHref(Value: string);
+begin
+  (Element as IHTMLLocation).href := Value;
 end;
 
 function THTMLLocation.GetPort: integer;

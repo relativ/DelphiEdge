@@ -72,6 +72,16 @@ end;
 
 (* === compile-time registration functions === *)
 (*----------------------------------------------------------------------------*)
+procedure SIRegister_TEmail(CL: TPSPascalCompiler);
+begin
+  with CL.AddClassN(CL.FindClass('TObject'),'TEmail') do
+  begin
+    RegisterMethod('Procedure SendMail(const host, username, password, subject, from: string; '+
+                          ' port: integer; ato: array of string;'+
+                          'messages: TStringList; attachments: array of string)');
+  end;
+end;
+
 procedure SIRegister_THttpClient(CL: TPSPascalCompiler);
 begin
   //with RegClassS(CL,'TObject', 'THttpClient') do
@@ -87,6 +97,7 @@ begin
     RegisterMethod('Function Put( AURL : string; ASource : TStream) : string');
     RegisterMethod('Function Patch( AURL : string; ASource : TStream) : string');
     RegisterMethod('Function Get( AURL : string) : string');
+    RegisterMethod('Function GetFile(AURL: string): TStream');
   end;
 end;
 
@@ -150,6 +161,7 @@ begin
   SIRegister_TTCPClient(CL);
   SIRegister_TUDPClient(CL);
   SIRegister_THttpClient(CL);
+  SIRegister_TEmail(CL);
 end;
 
 (* === run-time registration functions === *)
@@ -222,6 +234,14 @@ procedure TTCPClientBoundIP_R(Self: TTCPClient; var T: string);
 begin T := Self.BoundIP; end;
 
 (*----------------------------------------------------------------------------*)
+procedure RIRegister_TEmail(CL: TPSRuntimeClassImporter);
+begin
+  with CL.Add(THttpClient) do
+  begin
+    RegisterMethod(@TEmail.SendMail, 'SendMail');
+  end;
+end;
+
 procedure RIRegister_THttpClient(CL: TPSRuntimeClassImporter);
 begin
   with CL.Add(THttpClient) do
@@ -236,6 +256,7 @@ begin
     RegisterMethod(@THttpClient.Put, 'Put');
     RegisterMethod(@THttpClient.Patch, 'Patch');
     RegisterMethod(@THttpClient.Get, 'Get');
+    RegisterMethod(@THttpClient.GetFile, 'GetFile');
   end;
 end;
 
@@ -296,6 +317,7 @@ begin
   RIRegister_TTCPClient(CL);
   RIRegister_TUDPClient(CL);
   RIRegister_THttpClient(CL);
+  RIRegister_TEmail(CL);
 end;
 
 

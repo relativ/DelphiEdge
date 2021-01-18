@@ -27,7 +27,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Luna');
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.

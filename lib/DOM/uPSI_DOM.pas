@@ -110,7 +110,7 @@ begin
   with CL.AddClassN(CL.FindClass('TObject'),'THTMLLocation') do
   begin
     RegisterProperty('Element', 'IDispatch', iptrw);
-    RegisterProperty('Href', 'string', iptr);
+    RegisterProperty('Href', 'string', iptrw);
     RegisterProperty('Protocol', 'string', iptr);
     RegisterProperty('Host', 'string', iptr);
     RegisterProperty('Port', 'integer', iptr);
@@ -270,6 +270,9 @@ begin T := Self.Protocol; end;
 (*----------------------------------------------------------------------------*)
 procedure THTMLLocationHref_R(Self: THTMLLocation; var T: string);
 begin T := Self.Href; end;
+
+procedure THTMLLocationHref_W(Self: string; const T: string);
+begin Self := T; end;
 
 (*----------------------------------------------------------------------------*)
 procedure THTMLLocationElement_W(Self: THTMLLocation; const T: IDispatch);
@@ -460,7 +463,7 @@ begin
   with CL.Add(THTMLLocation) do
   begin
     RegisterPropertyHelper(@THTMLLocationElement_R,@THTMLLocationElement_W,'Element');
-    RegisterPropertyHelper(@THTMLLocationHref_R,nil,'Href');
+    RegisterPropertyHelper(@THTMLLocationHref_R,@THTMLLocationHref_W,'Href');
     RegisterPropertyHelper(@THTMLLocationProtocol_R,nil,'Protocol');
     RegisterPropertyHelper(@THTMLLocationHost_R,nil,'Host');
     RegisterPropertyHelper(@THTMLLocationPort_R,nil,'Port');

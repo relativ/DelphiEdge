@@ -845,6 +845,8 @@ begin
   Sender.AddMethod(Self, @TLib.EncodeMd5, 'function EncodeMd5(const value: string): string;');
   Sender.AddMethod(Self, @TLib.EncodeBase64, 'function EncodeBase64(const value: string): string;');
   Sender.AddMethod(Self, @TLib.DecodeBase64, 'function DecodeBase64(const value: string): string;');
+  Sender.AddMethod(Self, @TLib.AcInitialize, 'function AcInitialize: LongInt;');
+  Sender.AddMethod(Self, @TLib.AcUninitialize, 'procedure AcUninitialize;');
 
 
 // Sender.AddFunction(@TypeInfo, 'function TypeInfo(T: TypeIdentifier): Pointer');

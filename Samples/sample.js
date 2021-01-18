@@ -40,21 +40,7 @@ holder
   showmessage(window.location.href);
   //window.location.href = 'http://www.haberturk.com';
   showmessage(inttostr(window.screen.width));
-	
-	type
-		TTest = class
-			private
-				FDD : string;
-			public
-				property Prop : string read FDD write FDD;
-		end;
-		
-		
-		var Abc: TTest;
-		Abc := TTest.Create();
-		Abc.Prop := 'merhaba object';
-		ShowMessage(Abc.Prob);
-		Abc.Free;
+
   
  
   procedure fetchdb;
@@ -64,33 +50,38 @@ holder
 		s: string;
 		AEl: THTMLElement;
   begin
-    c:= TDBConnection.Create();
-    c.ProviderName := 'MySql';
-    c.Server := 'localhost';
-    c.Database := 'folsecdb';
-    c.Port := 3303;
-    c.UserName := 'root';
-    c.Password := 'FolSec1453';
-    c.Params.Values['CharacterSet'] := 'utf8';
-    c.Open();
-  
-  
-    q:= TDBQuery.Create();
-    q.Connection := c;
-    q.SQL.Text := 'select * from shared_folders';
-    q.Open();
-    while not q.Eof do
-    begin
-     s := s + q.FieldByNameAsString('folder_name') + ' <br> ';
-     q.Next();
-    end;
-   
-    AEl := document.getElementById('holder');
-    AEl.InnerHtml :=  s;
-    q.Close();
-    q.Free();
-    c.Close();
-    c.Free();
+		AcInitialize();
+		try
+	    c:= TDBConnection.Create();
+	    c.ProviderName := 'MySql';
+	    c.Server := 'localhost';
+	    c.Database := 'folsecdb';
+	    c.Port := 3303;
+	    c.UserName := 'root';
+	    c.Password := 'FolSec1453';
+	    c.Params.Values['CharacterSet'] := 'utf8';
+	    c.Open();
+	  
+	  
+	    q:= TDBQuery.Create();
+	    q.Connection := c;
+	    q.SQL.Text := 'select * from shared_folders';
+	    q.Open();
+	    while not q.Eof do
+	    begin
+	     s := s + q.FieldByNameAsString('folder_name') + ' <br> ';
+	     q.Next();
+	    end;
+	   
+	    AEl := document.getElementById('holder');
+	    AEl.InnerHtml :=  s;
+	    q.Close();
+	    q.Free();
+	    c.Close();
+	    c.Free();
+		finally
+		 	AcUninitialize;
+		end;
   end;
   
   document.GetElementById('testid').AttachEvent('onclick', 'fetchdb');

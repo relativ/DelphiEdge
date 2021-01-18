@@ -79,12 +79,12 @@ begin
     RegisterMethod('Procedure Post');
     RegisterMethod('Procedure ExecSQL');
     RegisterMethod('Function Eof : boolean');
-    RegisterMethod('Function FieldByNameAsBoolean( FieldName : string) : Boolean');
-    RegisterMethod('Function FieldByNameAsDateTime( FieldName : string) : TDateTime');
-    RegisterMethod('Function FieldByNameAsFloat( FieldName : string) : Double');
-    RegisterMethod('Function FieldByNameAsInteger( FieldName : string) : Longint');
-    RegisterMethod('Function FieldByNameAsString( FieldName : string) : String');
-    RegisterMethod('Function FieldByName( const FieldName : string) : TFieldNode');
+    RegisterMethod('Function FieldByNameAsBoolean( FieldName : String) : Boolean');
+    RegisterMethod('Function FieldByNameAsDateTime( FieldName : String) : TDateTime');
+    RegisterMethod('Function FieldByNameAsFloat( FieldName : String) : Double');
+    RegisterMethod('Function FieldByNameAsInteger( FieldName : String) : Longint');
+    RegisterMethod('Function FieldByNameAsString( FieldName : String) : String');
+    RegisterMethod('Function FieldByName( const FieldName : String) : TFieldNode');
     RegisterProperty('Active', 'boolean', iptrw);
     RegisterProperty('Connection', 'TDBConnection', iptrw);
     RegisterProperty('SQL', 'TStrings', iptr);
@@ -100,12 +100,12 @@ begin
   begin
     RegisterMethod('Constructor Create( ADataSet : TObject)');
     RegisterMethod('Procedure Add( Field : TFieldNode)');
-    RegisterMethod('Procedure CheckFieldName( const FieldName : string)');
-    RegisterMethod('Procedure CheckFieldNames( const FieldNames : string)');
+    RegisterMethod('Procedure CheckFieldName( const FieldName : String)');
+    RegisterMethod('Procedure CheckFieldNames( const FieldNames : String)');
     RegisterMethod('Procedure Clear');
     RegisterMethod('Procedure ClearAutomatic');
-    RegisterMethod('Function FindField( const FieldName : string) : TFieldNode');
-    RegisterMethod('Function FieldByName( const FieldName : string) : TFieldNode');
+    RegisterMethod('Function FindField( const FieldName : String) : TFieldNode');
+    RegisterMethod('Function FieldByName( const FieldName : String) : TFieldNode');
     RegisterMethod('Function FieldByNumber( FieldNo : Integer) : TFieldNode');
     RegisterMethod('Procedure GetFieldNames( List : TStrings)');
     RegisterMethod('Function IndexOf( Field : TFieldNode) : Integer');
@@ -134,30 +134,30 @@ begin
     RegisterProperty('AsInteger', 'Longint', iptrw);
     RegisterProperty('AsLargeInt', 'LongInt', iptrw);
     RegisterProperty('AsLongWord', 'LongWord', iptrw);
-    RegisterProperty('AsString', 'string', iptrw);
-    RegisterProperty('AsWideString', 'string', iptrw);
-    RegisterProperty('AsAnsiString', 'AnsiString', iptrw);
+    RegisterProperty('AsString', 'String', iptrw);
+    RegisterProperty('AsWideString', 'String', iptrw);
+    RegisterProperty('String', 'String', iptrw);
     RegisterProperty('AsVariant', 'Variant', iptrw);
-    RegisterProperty('AttributeSet', 'string', iptrw);
+    RegisterProperty('AttributeSet', 'String', iptrw);
     RegisterProperty('CurValue', 'Variant', iptr);
     RegisterProperty('DataSize', 'Integer', iptr);
-    RegisterProperty('DataType', 'string', iptr);
+    RegisterProperty('DataType', 'String', iptr);
     RegisterProperty('FieldNo', 'Integer', iptr);
-    RegisterProperty('FullName', 'string', iptr);
+    RegisterProperty('FullName', 'String', iptr);
     RegisterProperty('IsIndexField', 'Boolean', iptr);
     RegisterProperty('IsNull', 'Boolean', iptr);
     RegisterProperty('NewValue', 'Variant', iptrw);
     RegisterProperty('OldValue', 'Variant', iptr);
     RegisterProperty('Size', 'Integer', iptrw);
-    RegisterProperty('Text', 'string', iptrw);
+    RegisterProperty('Text', 'String', iptrw);
     RegisterProperty('Value', 'Variant', iptrw);
-    RegisterProperty('DisplayLabel', 'string', iptrw);
+    RegisterProperty('DisplayLabel', 'String', iptrw);
     RegisterProperty('DisplayWidth', 'Integer', iptrw);
-    RegisterProperty('FieldName', 'string', iptrw);
+    RegisterProperty('FieldName', 'String', iptrw);
     RegisterProperty('HasConstraints', 'Boolean', iptr);
     RegisterProperty('Index', 'Integer', iptrw);
-    RegisterProperty('KeyFields', 'string', iptrw);
-    RegisterProperty('Origin', 'string', iptrw);
+    RegisterProperty('KeyFields', 'String', iptrw);
+    RegisterProperty('Origin', 'String', iptrw);
     RegisterProperty('ReadOnly', 'Boolean', iptrw);
     RegisterProperty('Required', 'Boolean', iptrw);
   end;
@@ -172,12 +172,12 @@ begin
     RegisterMethod('Constructor Create');
     RegisterMethod('Procedure Open( )');
     RegisterMethod('Procedure Close( )');
-    RegisterProperty('ProviderName', 'string', iptrw);
-    RegisterProperty('UserName', 'string', iptrw);
-    RegisterProperty('Password', 'string', iptrw);
-    RegisterProperty('Server', 'string', iptrw);
+    RegisterProperty('ProviderName', 'String', iptrw);
+    RegisterProperty('UserName', 'String', iptrw);
+    RegisterProperty('Password', 'String', iptrw);
+    RegisterProperty('Server', 'String', iptrw);
     RegisterProperty('Port', 'integer', iptrw);
-    RegisterProperty('Database', 'string', iptrw);
+    RegisterProperty('Database', 'String', iptrw);
     RegisterProperty('Connected', 'boolean', iptrw);
     RegisterProperty('Params', 'TStringList', iptr);
   end;
@@ -254,19 +254,19 @@ procedure TFieldNodeReadOnly_R(Self: TFieldNode; var T: Boolean);
 begin T := Self.ReadOnly; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeOrigin_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeOrigin_W(Self: TFieldNode; const T: String);
 begin Self.Origin := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeOrigin_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeOrigin_R(Self: TFieldNode; var T: String);
 begin T := Self.Origin; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeKeyFields_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeKeyFields_W(Self: TFieldNode; const T: String);
 begin Self.KeyFields := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeKeyFields_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeKeyFields_R(Self: TFieldNode; var T: String);
 begin T := Self.KeyFields; end;
 
 (*----------------------------------------------------------------------------*)
@@ -282,11 +282,11 @@ procedure TFieldNodeHasConstraints_R(Self: TFieldNode; var T: Boolean);
 begin T := Self.HasConstraints; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeFieldName_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeFieldName_W(Self: TFieldNode; const T: String);
 begin Self.FieldName := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeFieldName_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeFieldName_R(Self: TFieldNode; var T: String);
 begin T := Self.FieldName; end;
 
 (*----------------------------------------------------------------------------*)
@@ -298,11 +298,11 @@ procedure TFieldNodeDisplayWidth_R(Self: TFieldNode; var T: Integer);
 begin T := Self.DisplayWidth; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeDisplayLabel_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeDisplayLabel_W(Self: TFieldNode; const T: String);
 begin Self.DisplayLabel := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeDisplayLabel_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeDisplayLabel_R(Self: TFieldNode; var T: String);
 begin T := Self.DisplayLabel; end;
 
 (*----------------------------------------------------------------------------*)
@@ -314,11 +314,11 @@ procedure TFieldNodeValue_R(Self: TFieldNode; var T: Variant);
 begin T := Self.Value; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeText_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeText_W(Self: TFieldNode; const T: String);
 begin Self.Text := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeText_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeText_R(Self: TFieldNode; var T: String);
 begin T := Self.Text; end;
 
 (*----------------------------------------------------------------------------*)
@@ -350,7 +350,7 @@ procedure TFieldNodeIsIndexField_R(Self: TFieldNode; var T: Boolean);
 begin T := Self.IsIndexField; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeFullName_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeFullName_R(Self: TFieldNode; var T: String);
 begin T := Self.FullName; end;
 
 (*----------------------------------------------------------------------------*)
@@ -358,7 +358,7 @@ procedure TFieldNodeFieldNo_R(Self: TFieldNode; var T: Integer);
 begin T := Self.FieldNo; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeDataType_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeDataType_R(Self: TFieldNode; var T: String);
 begin T := Self.DataType; end;
 
 (*----------------------------------------------------------------------------*)
@@ -370,11 +370,11 @@ procedure TFieldNodeCurValue_R(Self: TFieldNode; var T: Variant);
 begin T := Self.CurValue; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeAttributeSet_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeAttributeSet_W(Self: TFieldNode; const T: String);
 begin Self.AttributeSet := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeAttributeSet_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeAttributeSet_R(Self: TFieldNode; var T: String);
 begin T := Self.AttributeSet; end;
 
 (*----------------------------------------------------------------------------*)
@@ -386,27 +386,27 @@ procedure TFieldNodeAsVariant_R(Self: TFieldNode; var T: Variant);
 begin T := Self.AsVariant; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsAnsiString_W(Self: TFieldNode; const T: AnsiString);
-begin Self.AsAnsiString := T; end;
-
-(*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsAnsiString_R(Self: TFieldNode; var T: AnsiString);
-begin T := Self.AsAnsiString; end;
-
-(*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsWideString_W(Self: TFieldNode; const T: string);
-begin Self.AsWideString := T; end;
-
-(*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsWideString_R(Self: TFieldNode; var T: string);
-begin T := Self.AsWideString; end;
-
-(*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsString_W(Self: TFieldNode; const T: string);
+procedure TFieldNodeString_W(Self: TFieldNode; const T: String);
 begin Self.AsString := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TFieldNodeAsString_R(Self: TFieldNode; var T: string);
+procedure TFieldNodeString_R(Self: TFieldNode; var T: String);
+begin T := Self.AsString; end;
+
+(*----------------------------------------------------------------------------*)
+procedure TFieldNodeAsWideString_W(Self: TFieldNode; const T: String);
+begin Self.AsWideString := T; end;
+
+(*----------------------------------------------------------------------------*)
+procedure TFieldNodeAsWideString_R(Self: TFieldNode; var T: String);
+begin T := Self.AsWideString; end;
+
+(*----------------------------------------------------------------------------*)
+procedure TFieldNodeAsString_W(Self: TFieldNode; const T: String);
+begin Self.AsString := T; end;
+
+(*----------------------------------------------------------------------------*)
+procedure TFieldNodeAsString_R(Self: TFieldNode; var T: String);
 begin T := Self.AsString; end;
 
 (*----------------------------------------------------------------------------*)
@@ -494,11 +494,11 @@ procedure TDBConnectionConnected_R(Self: TDBConnection; var T: boolean);
 begin T := Self.Connected; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionDatabase_W(Self: TDBConnection; const T: string);
+procedure TDBConnectionDatabase_W(Self: TDBConnection; const T: String);
 begin Self.Database := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionDatabase_R(Self: TDBConnection; var T: string);
+procedure TDBConnectionDatabase_R(Self: TDBConnection; var T: String);
 begin T := Self.Database; end;
 
 (*----------------------------------------------------------------------------*)
@@ -510,35 +510,35 @@ procedure TDBConnectionPort_R(Self: TDBConnection; var T: integer);
 begin T := Self.Port; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionServer_W(Self: TDBConnection; const T: string);
+procedure TDBConnectionServer_W(Self: TDBConnection; const T: String);
 begin Self.Server := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionServer_R(Self: TDBConnection; var T: string);
+procedure TDBConnectionServer_R(Self: TDBConnection; var T: String);
 begin T := Self.Server; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionPassword_W(Self: TDBConnection; const T: string);
+procedure TDBConnectionPassword_W(Self: TDBConnection; const T: String);
 begin Self.Password := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionPassword_R(Self: TDBConnection; var T: string);
+procedure TDBConnectionPassword_R(Self: TDBConnection; var T: String);
 begin T := Self.Password; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionUserName_W(Self: TDBConnection; const T: string);
+procedure TDBConnectionUserName_W(Self: TDBConnection; const T: String);
 begin Self.UserName := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionUserName_R(Self: TDBConnection; var T: string);
+procedure TDBConnectionUserName_R(Self: TDBConnection; var T: String);
 begin T := Self.UserName; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionProviderName_W(Self: TDBConnection; const T: string);
+procedure TDBConnectionProviderName_W(Self: TDBConnection; const T: String);
 begin Self.ProviderName := T; end;
 
 (*----------------------------------------------------------------------------*)
-procedure TDBConnectionProviderName_R(Self: TDBConnection; var T: string);
+procedure TDBConnectionProviderName_R(Self: TDBConnection; var T: String);
 begin T := Self.ProviderName; end;
 
 (*----------------------------------------------------------------------------*)
@@ -613,7 +613,7 @@ begin
     RegisterPropertyHelper(@TFieldNodeAsLongWord_R,@TFieldNodeAsLongWord_W,'AsLongWord');
     RegisterPropertyHelper(@TFieldNodeAsString_R,@TFieldNodeAsString_W,'AsString');
     RegisterPropertyHelper(@TFieldNodeAsWideString_R,@TFieldNodeAsWideString_W,'AsWideString');
-    RegisterPropertyHelper(@TFieldNodeAsAnsiString_R,@TFieldNodeAsAnsiString_W,'AsAnsiString');
+    RegisterPropertyHelper(@TFieldNodeString_R,@TFieldNodeString_W,'String');
     RegisterPropertyHelper(@TFieldNodeAsVariant_R,@TFieldNodeAsVariant_W,'AsVariant');
     RegisterPropertyHelper(@TFieldNodeAttributeSet_R,@TFieldNodeAttributeSet_W,'AttributeSet');
     RegisterPropertyHelper(@TFieldNodeCurValue_R,nil,'CurValue');

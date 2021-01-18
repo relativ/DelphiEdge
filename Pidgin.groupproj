@@ -12,11 +12,14 @@
         <Projects Include="extensions\DB\DataAccess.dproj">
             <Dependencies>D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj</Dependencies>
         </Projects>
-        <Projects Include="extensions\XML\XML.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="extensions\Socket\ClientSockets.dproj">
             <Dependencies>D:\Components\pascalscript-master\pascalscript-master\Source\PascalScript_Core_D25.dproj</Dependencies>
+        </Projects>
+        <Projects Include="extensions\Encryption\Encryptions.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="extensions\XML_JSON\XML_json.dproj">
+            <Dependencies/>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -53,15 +56,6 @@
     <Target Name="DataAccess:Make" DependsOnTargets="PascalScript_Core_D25:Make">
         <MSBuild Projects="extensions\DB\DataAccess.dproj" Targets="Make"/>
     </Target>
-    <Target Name="XML">
-        <MSBuild Projects="extensions\XML\XML.dproj"/>
-    </Target>
-    <Target Name="XML:Clean">
-        <MSBuild Projects="extensions\XML\XML.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="XML:Make">
-        <MSBuild Projects="extensions\XML\XML.dproj" Targets="Make"/>
-    </Target>
     <Target Name="ClientSockets" DependsOnTargets="PascalScript_Core_D25">
         <MSBuild Projects="extensions\Socket\ClientSockets.dproj"/>
     </Target>
@@ -71,14 +65,32 @@
     <Target Name="ClientSockets:Make" DependsOnTargets="PascalScript_Core_D25:Make">
         <MSBuild Projects="extensions\Socket\ClientSockets.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Encryptions">
+        <MSBuild Projects="extensions\Encryption\Encryptions.dproj"/>
+    </Target>
+    <Target Name="Encryptions:Clean">
+        <MSBuild Projects="extensions\Encryption\Encryptions.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Encryptions:Make">
+        <MSBuild Projects="extensions\Encryption\Encryptions.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="XML_json">
+        <MSBuild Projects="extensions\XML_JSON\XML_json.dproj"/>
+    </Target>
+    <Target Name="XML_json:Clean">
+        <MSBuild Projects="extensions\XML_JSON\XML_json.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="XML_json:Make">
+        <MSBuild Projects="extensions\XML_JSON\XML_json.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="PidginJS;PascalScript_Core_D25;DataAccess;XML;ClientSockets"/>
+        <CallTarget Targets="PidginJS;PascalScript_Core_D25;DataAccess;ClientSockets;Encryptions;XML_json"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="PidginJS:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean;XML:Clean;ClientSockets:Clean"/>
+        <CallTarget Targets="PidginJS:Clean;PascalScript_Core_D25:Clean;DataAccess:Clean;ClientSockets:Clean;Encryptions:Clean;XML_json:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="PidginJS:Make;PascalScript_Core_D25:Make;DataAccess:Make;XML:Make;ClientSockets:Make"/>
+        <CallTarget Targets="PidginJS:Make;PascalScript_Core_D25:Make;DataAccess:Make;ClientSockets:Make;Encryptions:Make;XML_json:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

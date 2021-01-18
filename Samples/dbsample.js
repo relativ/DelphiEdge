@@ -1,47 +1,103 @@
+<a href="javascript:void(0);" id="testid">týkla</a>
+<div id="holder">
+holder
+</div>
+<div id="delphifunction">
+</div>
+
 <script>
-  alert('merhaba dünyaa');
   var serkan = {"aaa": "merhaba serkan güneþ", "bbb": {"ccc": "hhhhhh"}};
   hasan = "naber";
+  
+  function callFunc(test, test2) {
+	var obj = {};
+	obj.merhaba = {};
+	obj.merhaba.aloo  = test + '--->'+ test2;
+	return obj;
+  }
+  window.onload = function(e) {
+	document.getElementById('delphifunction').innerHTML = window.external.run('deneme', {"deger":"merhaba deðer"});
+  }
 </script>
+
 
 <script type="text/pascal">
   import serkan;
   import hasan;
-  self.caption := serkan.GetValue('aaa') + ' -- ' + hasan;
+  self.caption := serkan.GetObject('bbb').GetValue('ccc') + ' -- ' + hasan;
+  var scall : Variant;
+  scall := window.call('callFunc', ['merhaba', 'deneme']);
+  var js: TJSObject;
+  js := JSDecode(scall);
+  showmessage(js.GetObject('merhaba').GetValue('aloo'));
   
-  var AEl: THTMLElement;
-  AEl := document.CreateElement('div');
- // AEl.SetAttribute('style', 'background-color: red;width:600px;height:500px');
-  document.body.AppendElement(AEl);
+  var element: THTMLElement;
+  element := document.CreateElement('a');
+  element.setAttribute('href', 'http://www.sahibinden.com');
+  element.InnerText := 'sahibinden.com';
+  document.body.AppendElement(element);
+  showmessage('ddddd');
+  showmessage(window.location.href);
+  //window.location.href = 'http://www.haberturk.com';
+  showmessage(inttostr(window.screen.width));
+					 
   
-  
-  var c: TDBConnection;
-  c:= TDBConnection.Create();
-  c.ProviderName := 'MySql';
-  c.Server := 'localhost';
-  c.Database := 'folsecdb';
-  c.Port := 3303;
-  c.UserName := 'root';
-  c.Password := 'FolSec1453';
-  c.Open();
-  
-  var q: TDBQuery;
-  var s: string;
-  q:= TDBQuery.Create();
-  q.Connection := c;
-  q.SQL.Text := 'select * from shared_folders';
-  q.Open();
-  while not q.Eof do
+ 
+  procedure fetchdb;
+	var 
+		c: TDBConnection;
+		q: TDBQuery;
+		s: string;
+		AEl: THTMLElement;
   begin
-     s := s + q.FieldByNameAsString('full_path') + ' <br> ';
-     q.Next();
-  end;
-  AEl.InnerHtml :=  s;
-  q.Close();
-  q.Free();
-  c.Close();
-  c.Free();
+    c:= TDBConnection.Create();
+    c.ProviderName := 'MySql';
+    c.Server := 'localhost';
+    c.Database := 'folsecdb';
+    c.Port := 3303;
+    c.UserName := 'root';
+    c.Password := 'FolSec1453';
+    c.Params.Values['CharacterSet'] := 'utf8';
+    c.Open();
   
-    
+  
+    q:= TDBQuery.Create();
+    q.Connection := c;
+    q.SQL.Text := 'select * from shared_folders';
+    q.Open();
+    while not q.Eof do
+    begin
+     s := s + q.Fields.FieldByName('full_path').AsString + ' <br> ';
+     q.Next();
+    end;
+   
+    AEl := document.getElementById('holder');
+    AEl.InnerHtml :=  s;
+    q.Close();
+    q.Free();
+    c.Close();
+    c.Free();
+  end;
+  
+  document.GetElementById('testid').AttachEvent('onclick', 'fetchdb');  
+  
+
+function deneme(val: variant): variant;
+var
+   jsobj: TJSObject;
+begin
+     showmessage('ddddd');
+     jsobj := JSDecode(val);
+     result := jsobj.GetValue('deger') + '<---';
+end;
+
+var s: string;
+var j : TJSON;
+s := '{"merhaba": "degerin", "aloo": {"ne": "var"}}';
+j := TJSON.Create(nil);
+j:= j.parse(s);
+
+showmessage(j['merhaba'].AsString);
+showmessage(j['aloo']['ne'].AsString);
 
 </script>
